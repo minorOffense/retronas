@@ -9,7 +9,8 @@ This is *(future work on)* a daemon manager for retronas, ultimately seperating 
 * UI runs as unprivileged user
 
 `DIR_SPOOL=/var/spool/retronas`
-`DIR_CACHE=/var/cache/retronas
+
+`DIR_CACHE=/var/cache/retronas`
 
 ## Workflow
 The expected workflow is theorised as ...
