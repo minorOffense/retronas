@@ -2,7 +2,7 @@
 
 This is *(future work on)* a daemon manager for retronas, ultimately seperating retronas from the UI.
 
-**Please Note:** thid is entirely theoretical at the moment and may end up being completely different than is documented below.
+**Please Note:** this is entirely theoretical at the moment and may end up being completely different than what is documented below.
 
 ## Context seperation
 * retronasd runs as priviledged user
