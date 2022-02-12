@@ -1,0 +1,18 @@
+[Unit]
+Description=RetroNASd
+Documentation=https://github.com/danmons/retronas/wiki
+After=network-online.target firewalld.service
+Wants=network-online.target
+
+[Service]
+Type=notify
+ExecStart=/opt/retronas/daemon/retronasd.py --mode start
+ExecRestart=/opt/retronas/daemon/retronasd.py --mode restart
+ExecStop=/opt/retronas/daemon/retronasd.py --mode stop
+TimeoutSec=0
+RestartSec=2
+Restart=always
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target
