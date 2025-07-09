@@ -42,15 +42,15 @@
       - tracker
 
     packages_debian:
-      debian11:
-        - libmysqlclient-dev
-        - libtracker-sparql-2.0-dev
-      debian12:
-        - default-libmysqlclient-dev
-        - libtracker-sparql-3.0-dev
-      debian13:
-        - default-libmysqlclient-dev
-        - libtracker-sparql-3.0-dev
+        debian11:
+          - libmysqlclient-dev
+          - libtracker-sparql-2.0-dev
+        debian12:
+          - default-libmysqlclient-dev
+          - libtracker-sparql-3.0-dev
+        debian13:
+          - default-libmysqlclient-dev
+          - libtracker-sparql-3.0-dev
 
 
     packages_ubuntu:
