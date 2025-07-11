@@ -39,5 +39,5 @@
       ansible.builtin.command:
         cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
 
-  - ansible.builtin.include_role:
-      name: retronas.role.system-config
+    - ansible.builtin.include_role:
+        name: retronas.role.system-config
