@@ -19,17 +19,6 @@
 
   tasks:
 
-    - name: "{{ my_name }} - Checking hw platform compatiblity"
-      ansible.builtin.debug:
-        msg: "INCOMPATIBLE PLATFORM, only {{ my_arch }} is supported"
-      when: ansible_architecture != my_arch
-
-    - ansible.builtin.meta: end_play
-      when: ansible_architecture != my_arch
-
-    - ansible.builtin.import_role:
-        name: retronas.role.dotnetcore3
-
     - name: "{{ my_name }} - Load RetroNAS config"
       ansible.builtin.include_vars: retronas_vars.yml
 
