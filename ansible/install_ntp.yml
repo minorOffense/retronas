@@ -24,8 +24,8 @@
 
     - name: "{{ my_name }} - remove packages"
       ansible.builtin.package:
-         name: "{{ remove_packages }}"
-         state: absent
+        name: "{{ remove_packages }}"
+        state: absent
 
     - ansible.builtin.import_role:
         name: retronas.role.package.latest
