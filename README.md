@@ -2,8 +2,8 @@
 # RetroNAS
 
 ## Project Information
-* [Status](https://github.com/retronas/retronas/wiki/SECURITY-WARNING)
-* [About](https://github.com/retronas/retronas/wiki/Status)
+* [Status](https://github.com/retronas/retronas/wiki/Status)
+* [About](https://github.com/retronas/retronas/wiki/About)
 * [HowTo](https://github.com/retronas/retronas/wiki)
 * [Contributing](https://github.com/retronas/retronas/wiki/Contributing)
 * [Thanks and Credits](https://github.com/retronas/retronas/wiki/Credits)
