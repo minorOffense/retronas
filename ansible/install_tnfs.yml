@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "TNFS Atari 8-bit and ZX Spectrum"
@@ -8,7 +8,7 @@
     module_name: "tnfs"
 
     packages:
-      -  build-essential
+      - build-essential
 
     templates:
       - { name: "{{ my_file }}.sh", dest: "{{ retronas_root }}/scripts", mode: "0755" }
@@ -18,46 +18,46 @@
     firewalld_ports:
       - { zone: "retro", port: 16384, protocol: tcp }
       - { zone: "retro", port: 16384, protocol: udp }
-  
+
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
-    notify: "{{ my_name }} - Restart service"
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - Install from source code"
-    ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
-    #args:
-      #creates: "{{ retronas_root}}/bin/tnfs"
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - Install from source code"
+      ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+      # args:
+      #   creates: "{{ retronas_root}}/bin/tnfs"
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - enable startup service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: started
-      enabled: yes
-      daemon_reload: yes
-    with_items:
-      - tnfsd
+    - name: "{{ my_name }} - enable startup service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+      with_items:
+        - tnfsd
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: restarted
-      daemon_reload: yes
-    with_items:
-      - tnfsd
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        daemon_reload: true
+      with_items:
+        - tnfsd

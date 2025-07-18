@@ -81,7 +81,7 @@
                 "prompt": "",
                 "type": "documentation",
                 "group":"",
-                "command": "NEEDED.md",
+                "command": "seaweedfs.md",
                 "args": ""
             }
         ]

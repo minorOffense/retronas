@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "netlink"
@@ -10,15 +10,15 @@
     packages:
       - curl
       - unzip
-      - dnsmasq 
-      - dnsutils 
+      - dnsmasq
+      - dnsutils
       - libnetfilter-queue-dev
-      - libnetfilter-queue1 
+      - libnetfilter-queue1
       - ppp
-      - arping 
-      - nftables 
-      - tcpd 
-      - wvdial 
+      - arping
+      - nftables
+      - tcpd
+      - wvdial
       - python3-pip
 
     templates:
@@ -37,42 +37,42 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - Run installer"
-    ansible.builtin.shell:
-      cmd: "./{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
-      chdir: "{{ retronas_root }}/scripts"
-      executable: /bin/bash
-    notify: "{{ my_name }} Restart Services"
+    - name: "{{ my_name }} - Run installer"
+      ansible.builtin.shell:
+        cmd: "./{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+        chdir: "{{ retronas_root }}/scripts"
+        executable: /bin/bash
+      notify: "{{ my_name }} Restart Services"
 
-  - name: "{{ my_name }} - Patch com port range detection"
-    ansible.builtin.patch:
-      src: /tmp/{{ my_name }}.patch
-      dest: /opt/{{ my_name }}/tunnel.py
+    - name: "{{ my_name }} - Patch com port range detection"
+      ansible.builtin.patch:
+        src: /tmp/{{ my_name }}.patch
+        dest: /opt/{{ my_name }}/tunnel.py
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
-  - name: "{{ my_name }} Restart Services"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: started
-      enabled: yes
-      daemon_reload: yes
-    with_items:
-      - "{{ my_name }}.service"
+    - name: "{{ my_name }} Restart Services"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+      with_items:
+        - "{{ my_name }}.service"

@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
-  gather_facts: no
-  become: yes
+  gather_facts: false
+  become: true
 
   # https://dist.teamxlink.co.uk/
 
@@ -13,13 +13,13 @@
     my_repo: "https://dist.teamxlink.co.uk/linux/debian"
     module_name: "xlink-kai"
 
-    prerequisite_packages: 
-        - ca-certificates
-        - gnupg
-        - curl
+    prerequisite_packages:
+      - ca-certificates
+      - gnupg
+      - curl
 
     packages:
-        - xlinkkai
+      - xlinkkai
 
     templates:
       - { name: "{{ my_name }}.service", dest: "/etc/systemd/system" }
@@ -41,7 +41,7 @@
   - name: "{{ my_name }} - Install prerequisite packages"
     ansible.builtin.package:
       name: "{{ prerequisite_packages }}"
-      update_cache: yes
+      update_cache: true
 
   - name: "{{ my_name }} - Create key dir"
     ansible.builtin.file:
@@ -53,8 +53,8 @@
 
   - name: "{{ my_name }} - Add teamxlink key"
     ansible.builtin.shell:
-        cmd: "curl -fsSL {{ my_repo }}/gpg | gpg --dearmor -o {{ my_key }}"
-        creates: "{{ my_key }}"
+      cmd: "curl -fsSL {{ my_repo }}/gpg | gpg --dearmor -o {{ my_key }}"
+      creates: "{{ my_key }}"
 
   - name: "{{ my_name }} - Fix perms on file"
     ansible.builtin.file:
@@ -103,9 +103,9 @@
       name: retronas.role.system-config
 
   handlers:
-  - name: "{{ my_name }} - Restart service(s)"
-    ansible.builtin.service:
-      name: "{{ my_name }}.service"
-      state: started
-      enabled: yes
-      daemon_reload: yes
+    - name: "{{ my_name }} - Restart service(s)"
+      ansible.builtin.service:
+        name: "{{ my_name }}.service"
+        state: started
+        enabled: true
+        daemon_reload: true

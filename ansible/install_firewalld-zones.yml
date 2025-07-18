@@ -1,9 +1,10 @@
+---
 # Dependencies
 - ansible.builtin.import_playbook: install_dnsmasq.yml
 - ansible.builtin.import_playbook: install_firewalld.yml
 
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "firewalld-zones"
@@ -32,31 +33,30 @@
 
   tasks:
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - Reload firewalld to pickup the new zones"
-    ansible.builtin.service:
-      name: "firewalld"
-      state: restarted
-      daemon_reload: yes
-      enabled: yes
-      force: yes
+    - name: "{{ my_name }} - Reload firewalld to pickup the new zones"
+      ansible.builtin.service:
+        name: "firewalld"
+        state: restarted
+        daemon_reload: true
+        enabled: true
+        force: true
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
-
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
-  - name: "{{ my_name }} - Reload firewalld"
-    ansible.builtin.set_fact:
-      install_changed: true
+    - name: "{{ my_name }} - Reload firewalld"
+      ansible.builtin.set_fact:
+        install_changed: true
 
 - ansible.builtin.import_playbook: install_firewalld.yml
   vars:

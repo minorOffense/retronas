@@ -7,25 +7,25 @@
     module_name: "nbd-client"
 
     packages:
-        - nbd-client
+      - nbd-client
 
     templates:
       - { name: "nbd.conf", dest: "/etc/modules-load.d/" }
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - enable ndb kernel module"
-    ansible.builtin.shell:
-      cmd: "modprobe nbd"
+    - name: "{{ my_name }} - enable ndb kernel module"
+      ansible.builtin.shell:
+        cmd: "modprobe nbd"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

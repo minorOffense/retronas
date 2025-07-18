@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "firewalld"
@@ -16,7 +16,7 @@
       - { name: "{{ my_name }}",               dest: "/etc",                  state: "directory", mode: "0750" }
       - { name: "{{ my_name }}.service.d",     dest: "/etc/systemd/system/",  state: "directory", mode: "0750" }
 
-    packages: 
+    packages:
       - firewalld
       - python3-firewall
 
@@ -25,34 +25,34 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
-    notify: "{{ my_name }} - Restart service"
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - install related ansible collections"
-    ansible.builtin.command:
-      cmd: /usr/bin/ansible-galaxy collection install {{ item.collection }}
-      creates: /opt/retronas/ansible/collections/ansible_collections/{{ item.creates }}
-    with_items: "{{ collections }}"
+    - name: "{{ my_name }} - install related ansible collections"
+      ansible.builtin.command:
+        cmd: /usr/bin/ansible-galaxy collection install {{ item.collection }}
+        creates: /opt/retronas/ansible/collections/ansible_collections/{{ item.creates }}
+      with_items: "{{ collections }}"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: restarted
-      daemon_reload: yes
-      enabled: yes
-      force: yes
-    with_items: "{{ my_services }}"
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        daemon_reload: true
+        enabled: true
+        force: true
+      with_items: "{{ my_services }}"

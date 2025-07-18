@@ -1,15 +1,15 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "OpenSSH"
     module_name: "openssh"
 
     packages:
-         - openssh-client
-         - openssh-server
-         - openssh-sftp-server
+      - openssh-client
+      - openssh-server
+      - openssh-sftp-server
 
     firewalld_rules:
       - { zone: retro, service: ssh }
@@ -17,28 +17,28 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
-    notify: "{{ my_name }} - Restart ssh"
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
+      notify: "{{ my_name }} - Restart ssh"
 
-  - name: "{{ my_name }} - Enable startup services"
-    ansible.builtin.service:
-      name: ssh
-      state: started
-      enabled: yes
+    - name: "{{ my_name }} - Enable startup services"
+      ansible.builtin.service:
+        name: ssh
+        state: started
+        enabled: true
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart ssh"
-    ansible.builtin.service:
-      name: ssh
-      state: restarted
+    - name: "{{ my_name }} - Restart ssh"
+      ansible.builtin.service:
+        name: ssh
+        state: restarted

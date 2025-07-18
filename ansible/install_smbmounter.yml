@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "smbmounter"
@@ -13,41 +13,41 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Include systems map"
-    ansible.builtin.include_vars: "retronas_systems.yml"
+    - name: "{{ my_name }} - Include systems map"
+      ansible.builtin.include_vars: "retronas_systems.yml"
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.romdir
+    - ansible.builtin.import_role:
+        name: retronas.role.romdir
 
-  - ansible.builtin.import_role:
-      name: retronas.role.extradirs
+    - ansible.builtin.import_role:
+        name: retronas.role.extradirs
 
-  - ansible.builtin.import_role:
-      name: retronas.role.samba
+    - ansible.builtin.import_role:
+        name: retronas.role.samba
 
-  - name: "{{ my_name }} - link romdir"
-    ansible.builtin.file:
-      src: "{{ retronas_path }}/roms/commodore/amiga"
-      dest: "{{ retronas_path }}/amiga"
-      owner: "{{ retronas_user }}"
-      group: "{{ retronas_group }}"
-      state: link
-      mode: "0775"
+    - name: "{{ my_name }} - link romdir"
+      ansible.builtin.file:
+        src: "{{ retronas_path }}/roms/commodore/amiga"
+        dest: "{{ retronas_path }}/amiga"
+        owner: "{{ retronas_user }}"
+        group: "{{ retronas_group }}"
+        state: link
+        mode: "0775"
 
-  - name: "{{ my_name }} - configure includes file"
-    ansible.builtin.ini_file:
-      path: /etc/samba/smb.conf
-      section: "amiga"
-      option: "include"
-      value: "/etc/samba/retronas_smbmounter.conf"
-    notify: "restart samba"
+    - name: "{{ my_name }} - configure includes file"
+      ansible.builtin.ini_file:
+        path: /etc/samba/smb.conf
+        section: "amiga"
+        option: "include"
+        value: "/etc/samba/retronas_smbmounter.conf"
+      notify: "restart samba"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
-    notify: "restart samba"
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
+      notify: "restart samba"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

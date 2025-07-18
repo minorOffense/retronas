@@ -7,7 +7,7 @@
     module_name: "megatools"
 
     packages:
-      - build-essential 
+      - build-essential
       - libglib2.0-dev
       - libssl-dev
       - libcurl4-openssl-dev
@@ -18,23 +18,23 @@
       - ninja-build
 
     templates:
-      - { name: "{{ my_file }}.sh", dest: "{{ retronas_root }}/scripts", mode: "0755"}
+      - { name: "{{ my_file }}.sh", dest: "{{ retronas_root }}/scripts", mode: "0755" }
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - build source"
-    ansible.builtin.command:
-      cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
-      creates: "/usr/local/bin/megatools"
+    - name: "{{ my_name }} - build source"
+      ansible.builtin.command:
+        cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
+        creates: "/usr/local/bin/megatools"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

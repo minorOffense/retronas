@@ -1,38 +1,44 @@
 #!/bin/bash
+set -eu
 
-SABREVER=1.1.0
-SABREURL=https://github.com/SabreTools/SabreTools/releases/download/${SABREVER}/SabreTools.v${SABREVER}.x86-64_netcoreapp3.1.zip
-SABRELFILE=/tmp/sabre.zip
-SABRELOCAL=/opt/sabretools
-ISNIGHTLY=0
+APP=SabreTools
+ORG=$APP
+REPO=$APP
+DESTDIR=/opt/${APP}
 
-### SABRETOOLS
-# -- Download
-[ ! -f ${SABRELFILE} ] && wget -qO ${SABRELFILE} ${SABREURL}
-[ $? -ne 0 ] && echo "Sadness getting Sabretools" && exit 1
 
-[ ! -d ${SABRELOCAL} ] && /bin/mkdir ${SABRELOCAL} || echo "Missing ${SABRELOCAL}"
-# -- Unpack
-if [ $ISNIGHTLY == 1 ]
-then
-  [ -f ${SABRELFILE} ] && /usr/bin/unzip -o ${SABRELFILE} -d /tmp/ || echo "Missing: ${SABRELFILE}"
-  mv /tmp/SabreTools/bin/Debug/netcoreapp3.1/* ${SABRELOCAL}/
-else
-  [ -f ${SABRELFILE} ] && /usr/bin/unzip -o ${SABRELFILE} -d ${SABRELOCAL} || echo "Missing: ${SABRELFILE}"
-fi
+case $(uname -m) in
+    x86_64)
+        ARCH=x64
+        ;;
 
-# -- create sabretools exec
-cat << 'EOST' > /usr/local/bin/sabretools
-#!/bin/bash
-PATH=/opt/sabretools:{{ retronas_root }}/bin/dotnetcore3:{{ retronas_root }}/bin/dotnetcore3/tools:${PATH}
-DOTNET_ROOT={{ retronas_root }}/bin/dotnetcore3
-export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
-dotnet /opt/sabretools/SabreTools.dll $*
-EOST
+    aarch64)
+        ARCH=arm64
+        ;;
+    *)
+      echo "Unsupported arch"
+      exit 1
+esac
 
-# -- Perms
-chmod +x /usr/local/bin/sabretools
-chmod 755 ${SABRELOCAL}
+dl_install() {
+    RELEASE=${1}
+    
+    [ -z "$RELEASE" ] && echo "Couldn't get release " && exit 1
+    [ "$RELEASE" == "null" ] && echo "Couldn't get release " && exit 1
+    [ ! -d "${DESTDIR}" ] && mkdir -p "${DESTDIR}"
 
-### CLEANUP
-rm ${SABRELFILE}
+    RTMP=$(mktemp -d)
+    cd $RTMP
+    curl -sOJL "${RELEASE}"
+
+    FILENAME=$(basename ${RELEASE})
+    if unzip -o $FILENAME -d $DESTDIR
+    then
+      [ -f /usr/local/bin/sabretools ] && rm -f /usr/local/bin/sabretools
+      ln -s ${DESTDIR}/${APP} /usr/local/bin/sabretools
+      rm -rf $RTMP
+    fi
+}
+
+RELEASE=$(curl -skJL https://api.github.com/repos/${ORG}/${REPO}/releases | jq -r ".[0].assets | map(select(.name | match (\"linux-${ARCH}_release\")))[-1] | .browser_download_url" )
+dl_install $RELEASE

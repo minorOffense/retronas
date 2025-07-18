@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "open-iscsi"
@@ -8,30 +8,30 @@
     module_name: "open-iscsi"
 
     packages:
-        - open-iscsi
+      - open-iscsi
 
     my_services:
-        - open-iscsi
+      - open-iscsi
 
     templates:
       - { name: "iscsi-manager-target-login.sh", dest: "{{ retronas_root }}/scripts", mode: "0755" }
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - Enable startup services"
-    ansible.builtin.service:
-      name: ssh
-      state: started
-      enabled: yes
+    - name: "{{ my_name }} - Enable startup services"
+      ansible.builtin.service:
+        name: ssh
+        state: started
+        enabled: true
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

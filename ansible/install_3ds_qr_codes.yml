@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "3DS QR Codes"
@@ -14,48 +14,48 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.romdir
+    - ansible.builtin.import_role:
+        name: retronas.role.romdir
 
-  - ansible.builtin.import_role:
-      name: retronas.role.nginx
+    - ansible.builtin.import_role:
+        name: retronas.role.nginx
 
-  - name: "{{ my_name }} - configure 3DS directory"
-    ansible.builtin.file:
-      path: "{{ rom_path }}"
-      owner: "{{ retronas_user }}"
-      group: "{{ retronas_group }}"
-      state: directory
-    
-  - name: "{{ my_name }} - create dirs"
-    ansible.builtin.file:
-      path: "{{ rom_path }}/{{ item }}"
-      owner: "{{ retronas_user }}"
-      group: "{{ retronas_group }}"
-      state: directory
-    with_items: "{{ dirs }}"
+    - name: "{{ my_name }} - configure 3DS directory"
+      ansible.builtin.file:
+        path: "{{ rom_path }}"
+        owner: "{{ retronas_user }}"
+        group: "{{ retronas_group }}"
+        state: directory
 
-  - name: "{{ my_name }} - link 3DS cia directory"
-    ansible.builtin.file:
-      src: "{{ rom_path }}/cia"
-      dest: "{{ retronas_path }}/roms/nintendo/3ds/cia"
-      state: link
+    - name: "{{ my_name }} - create dirs"
+      ansible.builtin.file:
+        path: "{{ rom_path }}/{{ item }}"
+        owner: "{{ retronas_user }}"
+        group: "{{ retronas_group }}"
+        state: directory
+      with_items: "{{ dirs }}"
 
-  - name: "{{ my_name }} - install qrencode"
-    ansible.builtin.apt:
-       name: qrencode
-       state: latest
+    - name: "{{ my_name }} - link 3DS cia directory"
+      ansible.builtin.file:
+        src: "{{ rom_path }}/cia"
+        dest: "{{ retronas_path }}/roms/nintendo/3ds/cia"
+        state: link
 
-  - name: "{{ my_name }} - configure QR generator script"
-    ansible.builtin.template:
-      src: "templates/{{ my_file }}/3ds_qr.sh.j2"
-      dest: "{{ retronas_root }}/scripts/3ds_qr.sh"
-      owner: root
-      group: root
-      mode: '0755'
+    - name: "{{ my_name }} - install qrencode"
+      ansible.builtin.apt:
+        name: qrencode
+        state: latest
 
-  -  ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - name: "{{ my_name }} - configure QR generator script"
+      ansible.builtin.template:
+        src: "templates/{{ my_file }}/3ds_qr.sh.j2"
+        dest: "{{ retronas_root }}/scripts/3ds_qr.sh"
+        owner: root
+        group: root
+        mode: '0755'
+
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

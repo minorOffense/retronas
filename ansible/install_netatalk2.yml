@@ -1,5 +1,6 @@
+---
 - hosts: localhost
-  gather_facts: yes
+  gather_facts: true
 
   vars:
     - my_name: "Netatalk2"
@@ -30,92 +31,92 @@
 
   tasks:
 
-  - name: "{{ my_name }}  - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }}  - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - name: "{{ my_name }}  - unhold netatalk package"
-    ansible.builtin.shell: "/usr/bin/apt-mark unhold netatalk"
+    - name: "{{ my_name }}  - unhold netatalk package"
+      ansible.builtin.shell: "/usr/bin/apt-mark unhold netatalk"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - name: "{{ my_name }} - download package for arm64"
-    ansible.builtin.shell:
-      chdir: "/tmp"
-      cmd: "aria2c --allow-overwrite=true http://mirror.aarnet.edu.au/pub/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_arm64.deb http://ftp.debian.org/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_arm64.deb"
-    when: ansible_architecture == "aarch64"
+    - name: "{{ my_name }} - download package for arm64"
+      ansible.builtin.shell:
+        chdir: "/tmp"
+        cmd: "aria2c --allow-overwrite=true http://mirror.aarnet.edu.au/pub/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_arm64.deb http://ftp.debian.org/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_arm64.deb"
+      when: ansible_architecture == "aarch64"
 
-  - name: "{{ my_name }} - download package for armhf"
-    ansible.builtin.shell:
-      chdir: "/tmp"
-      cmd: "aria2c --allow-overwrite=true http://mirror.aarnet.edu.au/pub/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_armhf.deb http://ftp.debian.org/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_armhf.deb"
-    when: ansible_architecture == "armhf"
+    - name: "{{ my_name }} - download package for armhf"
+      ansible.builtin.shell:
+        chdir: "/tmp"
+        cmd: "aria2c --allow-overwrite=true http://mirror.aarnet.edu.au/pub/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_armhf.deb http://ftp.debian.org/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_armhf.deb"
+      when: ansible_architecture == "armhf"
 
-  - name: "{{ my_name }} - download package for x86_64"
-    ansible.builtin.shell:
-      chdir: "/tmp"
-      cmd: "aria2c --allow-overwrite=true http://mirror.aarnet.edu.au/pub/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_amd64.deb http://ftp.debian.org/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_amd64.deb"
-    when: ansible_architecture == "x86_64"
+    - name: "{{ my_name }} - download package for x86_64"
+      ansible.builtin.shell:
+        chdir: "/tmp"
+        cmd: "aria2c --allow-overwrite=true http://mirror.aarnet.edu.au/pub/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_amd64.deb http://ftp.debian.org/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_amd64.deb"
+      when: ansible_architecture == "x86_64"
 
-  - name: "{{ my_name }} - download package for x86"
-    ansible.builtin.shell:
-      chdir: "/tmp"
-      cmd: "aria2c --allow-overwrite=true http://mirror.aarnet.edu.au/pub/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_i386.deb http://ftp.debian.org/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_i386.deb"
-    when: ansible_architecture == "i386"
+    - name: "{{ my_name }} - download package for x86"
+      ansible.builtin.shell:
+        chdir: "/tmp"
+        cmd: "aria2c --allow-overwrite=true http://mirror.aarnet.edu.au/pub/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_i386.deb http://ftp.debian.org/debian/pool/main/n/netatalk/netatalk_2.2.5-2+deb9u1_i386.deb"
+      when: ansible_architecture == "i386"
 
-  - name: "{{ my_name }} - install package"
-    ansible.builtin.shell:
-      chdir: "/tmp"
-      cmd: "dpkg -i netatalk_2.2.5*.deb"
+    - name: "{{ my_name }} - install package"
+      ansible.builtin.shell:
+        chdir: "/tmp"
+        cmd: "dpkg -i netatalk_2.2.5*.deb"
 
-  - name: "{{ my_name }}  - hold netatalk package"
-    ansible.builtin.shell: "/usr/bin/apt-mark hold netatalk"
+    - name: "{{ my_name }}  - hold netatalk package"
+      ansible.builtin.shell: "/usr/bin/apt-mark hold netatalk"
 
-  - name: "{{ my_name }} - configure /etc/default/netatalk"
-    ansible.builtin.template:
-      src: "templates/{{ my_file }}/default.j2"
-      dest: /etc/default/netatalk
-      owner: root
-      group: root
-      mode: '0644'
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - configure /etc/default/netatalk"
+      ansible.builtin.template:
+        src: "templates/{{ my_file }}/default.j2"
+        dest: /etc/default/netatalk
+        owner: root
+        group: root
+        mode: '0644'
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - configure AppleVolumes.default"
-    ansible.builtin.template:
-      src: "templates/{{ my_file }}/AppleVolumes.default.j2"
-      dest: /etc/netatalk/AppleVolumes.default
-      owner: root
-      group: root
-      mode: '0644'
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - configure AppleVolumes.default"
+      ansible.builtin.template:
+        src: "templates/{{ my_file }}/AppleVolumes.default.j2"
+        dest: /etc/netatalk/AppleVolumes.default
+        owner: root
+        group: root
+        mode: '0644'
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - configure afpd.conf"
-    ansible.builtin.template:
-      src: "templates/{{ my_file }}/afpd.conf.j2"
-      dest: /etc/netatalk/afpd.conf
-      owner: root
-      group: root
-      mode: '0644'
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - configure afpd.conf"
+      ansible.builtin.template:
+        src: "templates/{{ my_file }}/afpd.conf.j2"
+        dest: /etc/netatalk/afpd.conf
+        owner: root
+        group: root
+        mode: '0644'
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - enable startup services"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: started
-      enabled: yes
-    with_items:
-      - avahi-daemon
-      - netatalk
+    - name: "{{ my_name }} - enable startup services"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      with_items:
+        - avahi-daemon
+        - netatalk
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: restarted
-    with_items:
-      - avahi-daemon
-      - netatalk
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+      with_items:
+        - avahi-daemon
+        - netatalk
 
 - ansible.builtin.import_playbook: retronas_system_config.yml
   vars:

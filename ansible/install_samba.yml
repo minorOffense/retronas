@@ -1,6 +1,7 @@
+---
 - hosts: localhost
-  gather_facts: no
-  
+  gather_facts: false
+
   roles:
     - retronas.role.samba
 
@@ -8,5 +9,5 @@
     module_name: "samba"
 
   tasks:
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

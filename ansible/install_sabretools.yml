@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: yes
+  gather_facts: true
 
   vars:
     my_name: "SabreTools"
@@ -19,31 +19,20 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Checking hw platform compatiblity"
-    ansible.builtin.debug:
-      msg: "INCOMPATIBLE PLATFORM, only {{ my_arch }} is supported"
-    when: ansible_architecture != my_arch
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.meta: end_play
-    when: ansible_architecture != my_arch
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.dotnetcore3
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Run installer"
+      ansible.builtin.shell:
+        cmd: "./{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+        chdir: "{{ retronas_root }}/scripts"
+        executable: /bin/bash
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
-
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
-
-  - name: "{{ my_name }} - Run installer"
-    ansible.builtin.shell:
-      cmd: "./{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
-      chdir: "{{ retronas_root }}/scripts"
-      executable: /bin/bash
-
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

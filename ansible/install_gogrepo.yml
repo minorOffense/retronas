@@ -1,5 +1,6 @@
+---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "gogrepo"
@@ -22,35 +23,35 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - name: "{{ my_name }} - create GOG dir"
-    ansible.builtin.file:
-      path: "{{ retronas_path }}/{{ item }}"
-      owner: "{{ retronas_user }}"
-      group: "{{ retronas_group }}"
-      mode: "0775"
-      state: directory
-    with_items:
-      - gog
+    - name: "{{ my_name }} - create GOG dir"
+      ansible.builtin.file:
+        path: "{{ retronas_path }}/{{ item }}"
+        owner: "{{ retronas_user }}"
+        group: "{{ retronas_group }}"
+        mode: "0775"
+        state: directory
+      with_items:
+        - gog
 
-  - name: "{{ my_name }} - download gogrepo+patches (sairuk)"
-    ansible.builtin.shell:
-      chdir: "{{ retronas_root }}/bin"
-      cmd: "git clone https://github.com/sairuk/gogrepo.git"
-      creates: "{{ retronas_root }}/bin/gogrepo"
+    - name: "{{ my_name }} - download gogrepo+patches (sairuk)"
+      ansible.builtin.shell:
+        chdir: "{{ retronas_root }}/bin"
+        cmd: "git clone https://github.com/sairuk/gogrepo.git"
+        creates: "{{ retronas_root }}/bin/gogrepo"
 
-  - name: "{{ my_name }} - update gogrepo"
-    ansible.builtin.shell: 
-      chdir: "{{ retronas_root }}/bin/gogrepo"
-      cmd: "git pull"
+    - name: "{{ my_name }} - update gogrepo"
+      ansible.builtin.shell:
+        chdir: "{{ retronas_root }}/bin/gogrepo"
+        cmd: "git pull"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

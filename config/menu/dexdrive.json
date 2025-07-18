@@ -103,7 +103,7 @@
                 "prompt": "",
                 "type": "documentation",
                 "group":"",
-                "command": "NEEDED.md",
+                "command": "linux-dexdrive.md",
                 "args": ""
             }
         ]

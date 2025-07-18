@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "minicom"
@@ -8,9 +8,6 @@
     my_dir: ""
     module_name: "minicom"
     append_user_group: "dialout"
-
-    systemd_units:
-      #- { name: "minicom", type: 'service', state: "stopped", enabled: "no", restart: "no", instance: "no" }
 
     packages:
       - minicom
@@ -29,30 +26,30 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Include systems map"
-    ansible.builtin.include_vars: "retronas_systems.yml"
+    - name: "{{ my_name }} - Include systems map"
+      ansible.builtin.include_vars: "retronas_systems.yml"
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - ansible.builtin.import_role:
-      name: retronas.role.update-user
+    - ansible.builtin.import_role:
+        name: retronas.role.update-user
 
-  - name: "{{ my_name }} - script links" 
-    ansible.builtin.file:
-      dest: "{{ retronas_root }}/scripts/{{ item.dest }}"
-      src: "{{ retronas_root }}/scripts/{{ item.src }}"
-      state: link
-    with_items: "{{ script_links }}"
+    - name: "{{ my_name }} - script links"
+      ansible.builtin.file:
+        dest: "{{ retronas_root }}/scripts/{{ item.dest }}"
+        src: "{{ retronas_root }}/scripts/{{ item.src }}"
+        state: link
+      with_items: "{{ script_links }}"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

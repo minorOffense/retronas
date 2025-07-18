@@ -70,7 +70,7 @@
                 "prompt": "",
                 "type": "documentation",
                 "group":"",
-                "command": "NEEDED.md",
+                "command": "assembly64.md",
                 "args": ""
             }
         ]

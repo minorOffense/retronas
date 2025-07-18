@@ -3,7 +3,7 @@
 - ansible.builtin.import_playbook: install_extract-xiso.yml
 
 - hosts: localhost
-  gather_facts: yes
+  gather_facts: true
 
   roles:
     - retronas.role.cockpit
@@ -25,26 +25,26 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - name: "{{ my_name }} - clone repo"
-    ansible.builtin.git:
-      repo: 'https://github.com/sairuk/cockpit-xboxmanager.git'
-      dest: "{{ my_path }}/xboxmanager"
-      clone: yes
-      update: yes
-      version: "main"
+    - name: "{{ my_name }} - clone repo"
+      ansible.builtin.git:
+        repo: 'https://github.com/sairuk/cockpit-xboxmanager.git'
+        dest: "{{ my_path }}/xboxmanager"
+        clone: true
+        update: true
+        version: "main"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - name: "{{ my_name }} - run installer"
-    ansible.builtin.command:
-      cmd: "{{ my_path }}/xboxmanager/xboxmanager-install.sh"
+    - name: "{{ my_name }} - run installer"
+      ansible.builtin.command:
+        cmd: "{{ my_path }}/xboxmanager/xboxmanager-install.sh"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

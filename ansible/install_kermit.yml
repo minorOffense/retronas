@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "kermit"
@@ -22,25 +22,25 @@
 
   tasks:
 
-  - name: "{{ my_name }}  - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }}  - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - manage startup services"
-    ansible.builtin.service:
-      name: "{{ item.name }}"
-      state: "{{ item.state|default('stopped') }}"
-      enabled: "{{ item.enabled|default('no') }}"
-      daemon_reload: true
-    with_items: "{{ systemd_units }}"
+    - name: "{{ my_name }} - manage startup services"
+      ansible.builtin.service:
+        name: "{{ item.name }}"
+        state: "{{ item.state|default('stopped') }}"
+        enabled: "{{ item.enabled|default('no') }}"
+        daemon_reload: true
+      with_items: "{{ systemd_units }}"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

@@ -9,9 +9,9 @@
 
     firewalld_rules:
       - { zone: "retro", service: "tftp" }
-    
+
     packages:
-        tftpd-hpa
+      tftpd-hpa
 
     templates:
       - { name: "tftpd-hpa", dest: "/etc/default" }
@@ -40,7 +40,7 @@
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: tftpd-hpa
-      state: restarted
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: tftpd-hpa
+        state: restarted

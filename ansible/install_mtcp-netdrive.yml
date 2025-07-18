@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: yes
+  gather_facts: true
 
   vars:
     my_name: "mtcp-netdrive"
@@ -28,50 +28,49 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - install mtcp-netdrive"
-    ansible.builtin.command:
-      cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
+    - name: "{{ my_name }} - install mtcp-netdrive"
+      ansible.builtin.command:
+        cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
 
-  - name: "{{ my_name }} - enable startup services"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: started
-      enabled: yes
-      daemon-reload: yes
-    with_items: "{{ my_services }}"
+    - name: "{{ my_name }} - enable startup services"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+        daemon-reload: true
+      with_items: "{{ my_services }}"
 
+    #
+    # FIREWALL
+    #
+    - name: "{{ my_name }} - checking firewall rule"
+      ansible.builtin.stat:
+        path: /etc/firewalld/services
+      register: firewalld_services
 
-  #
-  # FIREWALL
-  #
-  - name: "{{ my_name }} - checking firewall rule"
-    ansible.builtin.stat:
-      path: /etc/firewalld/services
-    register: firewalld_services
+    - name: "{{ my_name }} - Generate firewall service"
+      ansible.builtin.template:
+        src: "templates/{{ my_file }}/mtcp-netdrive.xml.j2"
+        dest: "/etc/firewalld/services/mtcp-netdrive.xml"
+        owner: root
+        group: root
+        mode: 0644
+      when: firewalld_services.stat.exists
 
-  - name: "{{ my_name }} - Generate firewall service"
-    ansible.builtin.template:
-      src: "templates/{{ my_file }}/mtcp-netdrive.xml.j2"
-      dest: "/etc/firewalld/services/mtcp-netdrive.xml"
-      owner: root
-      group: root
-      mode: 0644
-    when: firewalld_services.stat.exists
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
-
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "waybackproxy"
@@ -20,40 +20,40 @@
       - git
 
     paths:
-      - { name: "{{ my_name }}", dest: "/opt",                state: "directory", mode: "0755" }
+      - { name: "{{ my_name }}", dest: "/opt", state: "directory", mode: "0755" }
 
     firewalld_ports:
       - { zone: "retro", port: 8888, protocol: tcp }
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - name: "{{ my_name }} - Install"
-    shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
-    args:
-      creates: "/opt/{{ my_name }}/{{ my_name }}.py"
+    - name: "{{ my_name }} - Install"
+      shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+      args:
+        creates: "/opt/{{ my_name }}/{{ my_name }}.py"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    service:
-      name: "{{ my_name }}.service"
-      state: restarted
-      daemon_reload: yes
+    - name: "{{ my_name }} - Restart service"
+      service:
+        name: "{{ my_name }}.service"
+        state: restarted
+        daemon_reload: true

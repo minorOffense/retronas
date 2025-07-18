@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "ntp"
@@ -16,36 +16,36 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - name: "{{ my_name }} - Load RetroNAS systems"
-    ansible.builtin.include_vars: retronas_systems.yml
+    - name: "{{ my_name }} - Load RetroNAS systems"
+      ansible.builtin.include_vars: retronas_systems.yml
 
-  - name: "{{ my_name }} - remove packages"
-    ansible.builtin.package:
-       name: "{{ remove_packages }}"
-       state: absent
+    - name: "{{ my_name }} - remove packages"
+      ansible.builtin.package:
+        name: "{{ remove_packages }}"
+        state: absent
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - name: "{{ my_name }} - listen"
-    ansible.builtin.lineinfile:
-      path: "/etc/openntpd/ntpd.conf"
-      search_string: "^listen on *$"
-      insertafter: "^# Addresses to listen on (ntpd does not listen by default)$"
-      line: "listen on *"
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - listen"
+      ansible.builtin.lineinfile:
+        path: "/etc/openntpd/ntpd.conf"
+        search_string: "^listen on *$"
+        insertafter: "^# Addresses to listen on (ntpd does not listen by default)$"
+        line: "listen on *"
+      notify: "{{ my_name }} - Restart service"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "openntpd.service"
-      state: restarted
-      daemon_reload: yes
-      enabled: yes
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "openntpd.service"
+        state: restarted
+        daemon_reload: true
+        enabled: true

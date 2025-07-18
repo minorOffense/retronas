@@ -70,7 +70,7 @@
                 "prompt": "",
                 "type": "documentation",
                 "group":"",
-                "command": "NEEDED.md",
+                "command": "tftp.md",
                 "args": ""
             }
         ]

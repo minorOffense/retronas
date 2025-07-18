@@ -1,11 +1,11 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     module_name: "nfs"
 
   tasks:
 
-  - ansible.builtin.import_role:
-      name: retronas.role.nfs
+    - ansible.builtin.import_role:
+        name: retronas.role.nfs

@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "hdparm"
@@ -8,8 +8,8 @@
     module_name: "hdparm"
 
     packages:
-         - hdparm
-         - coreutils
+      - hdparm
+      - coreutils
 
     scripts:
       - "{{ my_name }}.sh"
@@ -29,75 +29,75 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - name: "{{ my_name }} - check dir"
-    ansible.builtin.file:
-      path: /usr/lib/systemd/system
-      owner: root
-      group: root
-      mode: 0755
-      state: directory
+    - name: "{{ my_name }} - check dir"
+      ansible.builtin.file:
+        path: /usr/lib/systemd/system
+        owner: root
+        group: root
+        mode: 0755
+        state: directory
 
-  - name: "{{ my_name }} - install script"
-    ansible.builtin.template:
-      src: "templates/{{ my_file }}/{{ item }}.j2"
-      dest: "{{ retronas_root }}/scripts/{{ item }}"
-      owner: root
-      group: root
-      mode: '0755'
-    with_items:
-      - "{{ scripts }}"
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - install script"
+      ansible.builtin.template:
+        src: "templates/{{ my_file }}/{{ item }}.j2"
+        dest: "{{ retronas_root }}/scripts/{{ item }}"
+        owner: root
+        group: root
+        mode: '0755'
+      with_items:
+        - "{{ scripts }}"
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - create startup service"
-    ansible.builtin.template:
-      src: templates/{{ my_file }}/{{ item.name }}.{{ item.type }}.j2
-      dest: /usr/lib/systemd/system/{{ item.name }}.{{ item.type }}
-      owner: root
-      group: root
-      mode: 0644
-    with_items:
-      - "{{ systemd_units }}"
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - create startup service"
+      ansible.builtin.template:
+        src: templates/{{ my_file }}/{{ item.name }}.{{ item.type }}.j2
+        dest: /usr/lib/systemd/system/{{ item.name }}.{{ item.type }}
+        owner: root
+        group: root
+        mode: 0644
+      with_items:
+        - "{{ systemd_units }}"
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - create symlinks for webui"
-    ansible.builtin.file:
-      src: "{{ retronas_root }}/scripts/{{ my_name }}-manager.sh"
-      dest: "{{ retronas_root }}/scripts/{{ item }}.sh"
-      owner: root
-      group: root
-      state: link
-    with_items:
-      - "{{ symlinks }}"
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - create symlinks for webui"
+      ansible.builtin.file:
+        src: "{{ retronas_root }}/scripts/{{ my_name }}-manager.sh"
+        dest: "{{ retronas_root }}/scripts/{{ item }}.sh"
+        owner: root
+        group: root
+        state: link
+      with_items:
+        - "{{ symlinks }}"
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - enable startup service"
-    ansible.builtin.service:
-      name: "{{ item.name }}"
-      state: started
-      enabled: "{{ item.enabled }}"
-      daemon_reload: yes
-    with_items:
-      - "{{ systemd_units }}"
-    when:
-      - item.enabled == "yes"
+    - name: "{{ my_name }} - enable startup service"
+      ansible.builtin.service:
+        name: "{{ item.name }}"
+        state: started
+        enabled: "{{ item.enabled }}"
+        daemon_reload: true
+      with_items:
+        - "{{ systemd_units }}"
+      when:
+        - item.enabled == "yes"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: restarted
-      daemon_reload: yes
-    with_items:
-      - "{{ systemd_units }}"
-    when:
-      - item.restart == "yes"
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        daemon_reload: true
+      with_items:
+        - "{{ systemd_units }}"
+      when:
+        - item.restart == "yes"

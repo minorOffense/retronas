@@ -1,12 +1,13 @@
+---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   roles:
     - retronas.role.sslcert
-  
+
   vars:
     module_name: "sslcert"
 
   tasks:
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

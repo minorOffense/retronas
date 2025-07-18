@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: yes
+  gather_facts: true
 
   vars:
     my_name: "retroaimserver"
@@ -27,65 +27,65 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
-    notify: "{{ my_name }} - Restart service"
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - Install from source code"
-    ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
-    args:
-      creates: "{{ my_dir }}/retro_aim_server"
+    - name: "{{ my_name }} - Install from source code"
+      ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+      args:
+        creates: "{{ my_dir }}/retro_aim_server"
 
-  - name: "{{ my_name }} - enable service(s)"
-    ansible.builtin.service:
-      name: "{{ item.name }}.{{ item.type }}"
-      state: "{{ item.state }}"
-      enabled: "{{ item.enabled }}"
-      daemon_reload: yes
-    with_items: "{{ systemd_units }}"
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - enable service(s)"
+      ansible.builtin.service:
+        name: "{{ item.name }}.{{ item.type }}"
+        state: "{{ item.state }}"
+        enabled: "{{ item.enabled }}"
+        daemon_reload: true
+      with_items: "{{ systemd_units }}"
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - configure defaults"
-    ansible.builtin.lineinfile:
-      path: "{{ my_dir }}/settings.env"
-      regexp: "{{ item.regex }}"
-      line: "{{ item.line }}"
-    with_items: "{{ settings_env }}"
+    - name: "{{ my_name }} - configure defaults"
+      ansible.builtin.lineinfile:
+        path: "{{ my_dir }}/settings.env"
+        regexp: "{{ item.regex }}"
+        line: "{{ item.line }}"
+      with_items: "{{ settings_env }}"
 
-  #
-  # FIREWALL
-  #
-  - name: "{{ my_name }} - checking firewall rule"
-    ansible.builtin.stat:
-      path: /etc/firewalld/services
-    register: firewalld_services
+    #
+    # FIREWALL
+    #
+    - name: "{{ my_name }} - checking firewall rule"
+      ansible.builtin.stat:
+        path: /etc/firewalld/services
+      register: firewalld_services
 
-  - name: "{{ my_name }} - Generate firewall service"
-    ansible.builtin.template:
-      src: "templates/{{ my_file }}/retroaimserver.xml.j2"
-      dest: "/etc/firewalld/services/retroaimserver.xml"
-      owner: root
-      group: root
-      mode: 0644
-    when: firewalld_services.stat.exists
+    - name: "{{ my_name }} - Generate firewall service"
+      ansible.builtin.template:
+        src: "templates/{{ my_file }}/retroaimserver.xml.j2"
+        dest: "/etc/firewalld/services/retroaimserver.xml"
+        owner: root
+        group: root
+        mode: 0644
+      when: firewalld_services.stat.exists
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ item.name }}.{{ item.type }}"
-      state: restarted
-      daemon_reload: yes
-    with_items: "{{ systemd_units }}"
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ item.name }}.{{ item.type }}"
+        state: restarted
+        daemon_reload: true
+      with_items: "{{ systemd_units }}"

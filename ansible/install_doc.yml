@@ -2,7 +2,7 @@
 - ansible.builtin.import_playbook: install_lynx.yml
 
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     - my_name: "retronas_docs"
@@ -15,14 +15,14 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - name: "{{ my_name }} - Clone local copy of RetroNAS wiki"
-    ansible.builtin.git:
-      repo: https://github.com/retronas/retronas.wiki.git
-      dest: "{{ retronas_root }}/doc"
-      update: no
+    - name: "{{ my_name }} - Clone local copy of RetroNAS wiki"
+      ansible.builtin.git:
+        repo: https://github.com/retronas/retronas.wiki.git
+        dest: "{{ retronas_root }}/doc"
+        update: false
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "ProFTPd"
@@ -8,8 +8,8 @@
     module_name: "proftpd"
 
     packages:
-       - avahi-daemon
-       - proftpd-core
+      - avahi-daemon
+      - proftpd-core
 
     templates:
       - { name: "retronas.conf", dest: "/etc/proftpd/conf.d" }
@@ -21,41 +21,41 @@
 
   tasks:
 
-  - name: "{{ my_name }}  - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }}  - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - remove  mod_unique_id.c"
-    ansible.builtin.ini_file:
-      path: /etc/proftpd/modules.conf
-      section: null
-      option: "LoadModule mod_unique_id.c"
-      state: absent
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - remove  mod_unique_id.c"
+      ansible.builtin.ini_file:
+        path: /etc/proftpd/modules.conf
+        section: null
+        option: "LoadModule mod_unique_id.c"
+        state: absent
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - enable startup services"
-    ansible.builtin.service:
-      name: proftpd
-      state: started
-      enabled: yes
+    - name: "{{ my_name }} - enable startup services"
+      ansible.builtin.service:
+        name: proftpd
+        state: started
+        enabled: true
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: restarted
-    with_items:
-      - avahi-daemon
-      - proftpd
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+      with_items:
+        - avahi-daemon
+        - proftpd

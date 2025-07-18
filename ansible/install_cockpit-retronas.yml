@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: yes
+  gather_facts: true
 
   vars:
     my_name: "cockpit-retronas"
@@ -10,34 +10,34 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.include_role:
-      name: retronas.role.filesystems
+    - ansible.builtin.include_role:
+        name: retronas.role.filesystems
 
-  - ansible.builtin.include_role:
-      name: retronas.role.cockpit
+    - ansible.builtin.include_role:
+        name: retronas.role.cockpit
 
-  - name: "{{ my_name }} - create package directory"
-    ansible.builtin.file:
-      path: "{{ package_dir }}/{{ my_name }}"
-      owner: root
-      group: root
-      mode: 0755
-      state: directory
+    - name: "{{ my_name }} - create package directory"
+      ansible.builtin.file:
+        path: "{{ package_dir }}/{{ my_name }}"
+        owner: root
+        group: root
+        mode: 0755
+        state: directory
 
-  - name: "{{ my_name }} - Generate scripts"
-    ansible.builtin.template:
-      src: "templates/{{ my_file }}/{{ my_file }}.sh.j2"
-      dest: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
-      owner: root
-      group: root
-      mode: 0755
+    - name: "{{ my_name }} - Generate scripts"
+      ansible.builtin.template:
+        src: "templates/{{ my_file }}/{{ my_file }}.sh.j2"
+        dest: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
+        owner: root
+        group: root
+        mode: 0755
 
-  - name: "{{ my_name }} - build source"
-    ansible.builtin.command:
-      cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
+    - name: "{{ my_name }} - build source"
+      ansible.builtin.command:
+        cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
 
-  -  ansible.builtin.include_role:
-      name: retronas.role.system-config
+    - ansible.builtin.include_role:
+        name: retronas.role.system-config

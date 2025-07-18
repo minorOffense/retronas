@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "linux-dexdrive"
@@ -8,7 +8,7 @@
     module_name: "linux-dexdrive"
 
     packages:
-      - git 
+      - git
       - build-essential
 
     templates:
@@ -22,43 +22,43 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - name: "{{ my_name }} - Load RetroNAS systems"
-    ansible.builtin.include_vars: retronas_systems.yml
+    - name: "{{ my_name }} - Load RetroNAS systems"
+      ansible.builtin.include_vars: retronas_systems.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.romdir
+    - ansible.builtin.import_role:
+        name: retronas.role.romdir
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
-    notify: "{{ my_name }} daemon-reload" 
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
+      notify: "{{ my_name }} daemon-reload"
 
-  - name: "{{ my_name }} - build source"
-    ansible.builtin.shell:
-      cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
-      creates: "/usr/local/bin/dexattach"
+    - name: "{{ my_name }} - build source"
+      ansible.builtin.shell:
+        cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
+        creates: "/usr/local/bin/dexattach"
 
-  - name: "{{ my_name }} - dexdrive module"
-    ansible.builtin.lineinfile:
-      path: /etc/modules-load.d/modules.conf
-      regex: "^dexdrive$"
-      line: "dexdrive"
+    - name: "{{ my_name }} - dexdrive module"
+      ansible.builtin.lineinfile:
+        path: /etc/modules-load.d/modules.conf
+        regex: "^dexdrive$"
+        line: "dexdrive"
 
-  - name: "{{ my_name }} - {{ retronas_user }} groups"
-    ansible.builtin.user:
-      name: "{{ retronas_user }}"
-      group: "disk"
-      append: yes
+    - name: "{{ my_name }} - {{ retronas_user }} groups"
+      ansible.builtin.user:
+        name: "{{ retronas_user }}"
+        group: "disk"
+        append: true
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
-  - name: "{{ my_name }} daemon-reload"
-    ansible.builtin.systemd:
-      daemon_reload: yes
+    - name: "{{ my_name }} daemon-reload"
+      ansible.builtin.systemd:
+        daemon_reload: true

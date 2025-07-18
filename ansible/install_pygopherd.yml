@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "pygopherd"
@@ -20,34 +20,34 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
-    notify: "{{ my_name }} - Restart service"
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - build source"
-    ansible.builtin.command:
-      cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
-      creates: "opt/pygopherd/bin/pygopherd"
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - build source"
+      ansible.builtin.command:
+        cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
+        creates: "opt/pygopherd/bin/pygopherd"
+      notify: "{{ my_name }} - Restart service"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: restarted
-      daemon_reload: yes
-    with_items:
-      - "{{ my_name }}"
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        daemon_reload: true
+      with_items:
+        - "{{ my_name }}"

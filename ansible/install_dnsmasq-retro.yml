@@ -1,9 +1,10 @@
+---
 # Dependencies
 - import_playbook: install_ntp.yml
 - import_playbook: install_dnsmasq.yml
 
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "dnsmasq-retro"
@@ -38,49 +39,49 @@
 
 
   tasks:
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - name: "{{ my_name }} - mask default dnsmasq service" 
-    service:
-      name: "dnsmasq"
-      state: stopped
-      daemon_reload: yes
-      enabled: no
-      masked: yes
+    - name: "{{ my_name }} - mask default dnsmasq service"
+      service:
+        name: "dnsmasq"
+        state: stopped
+        daemon_reload: true
+        enabled: false
+        masked: true
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
-    notify: "{{ my_name }} - Restart services"
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
+      notify: "{{ my_name }} - Restart services"
 
-  - name: "{{ my_name }} - checking for dhcpcd"
-    stat:
-      path: "/etc/dhcpcd.conf"
-    register: dhcpcd_check
+    - name: "{{ my_name }} - checking for dhcpcd"
+      stat:
+        path: "/etc/dhcpcd.conf"
+      register: dhcpcd_check
 
-  - name: "{{ my_name }} - setup dhcpcd"
-    lineinfile:
-      path: "{{ item.dest }}"
-      search_string: "{{ item.match_regex | default('^$') }}"
-      insertbefore: "{{ item.before_regex | default(omit) }}"
-      insertafter: "{{ item.after_regex | default(omit) }}"
-      line: "{{ item.option }} {{ item.value }}"
-    with_items: "{{ net_settings }}"
-    when: dhcpcd_check.stat.exists
-    notify: "{{ my_name }} - Restart services"
+    - name: "{{ my_name }} - setup dhcpcd"
+      lineinfile:
+        path: "{{ item.dest }}"
+        search_string: "{{ item.match_regex | default('^$') }}"
+        insertbefore: "{{ item.before_regex | default(omit) }}"
+        insertafter: "{{ item.after_regex | default(omit) }}"
+        line: "{{ item.option }} {{ item.value }}"
+      with_items: "{{ net_settings }}"
+      when: dhcpcd_check.stat.exists
+      notify: "{{ my_name }} - Restart services"
 
-  -  ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart services"
-    service:
-      name: "{{ item }}"
-      state: restarted
-      daemon_reload: yes
-      enabled: yes
-    with_items: "{{ my_service }}"
+    - name: "{{ my_name }} - Restart services"
+      service:
+        name: "{{ item }}"
+        state: restarted
+        daemon_reload: true
+        enabled: true
+      with_items: "{{ my_service }}"

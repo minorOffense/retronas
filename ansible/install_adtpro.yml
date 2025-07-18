@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "adtpro"
@@ -23,62 +23,62 @@
 
     paths:
       - { name: "{{ my_name }}", dest: "/opt",                state: "directory", mode: "0755"}
-      #- { name: "{{ my_name }}", dest: "{{ retronas_path }}", state: "directory", mode: "0755"}
+      # - { name: "{{ my_name }}", dest: "{{ retronas_path }}", state: "directory", mode: "0755"}
 
     firewalld_ports:
       - { port: 60000, protocol: tcp }
 
   tasks:
 
-  - name: "{{ my_name }} - Include systems map"
-    ansible.builtin.include_vars: "retronas_systems.yml"
+    - name: "{{ my_name }} - Include systems map"
+      ansible.builtin.include_vars: "retronas_systems.yml"
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.romdir
+    - ansible.builtin.import_role:
+        name: retronas.role.romdir
 
-  - ansible.builtin.import_role:
-      name: retronas.role.x11vnc
+    - ansible.builtin.import_role:
+        name: retronas.role.x11vnc
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - disks symlink"
-    ansible.builtin.file:
-      src: "roms/apple/appleii"
-      dest: "{{ retronas_path }}/{{ my_name }}"
-      state: "link"
+    - name: "{{ my_name }} - disks symlink"
+      ansible.builtin.file:
+        src: "roms/apple/appleii"
+        dest: "{{ retronas_path }}/{{ my_name }}"
+        state: "link"
 
-  - name: "{{ my_name }} - Install"
-    ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
-    args:
-      creates: "{{ retronas_root}} {{ my_dir }}/adtpro.sh"
+    - name: "{{ my_name }} - Install"
+      ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+      args:
+        creates: "{{ retronas_root}} {{ my_dir }}/adtpro.sh"
 
-  - name: "{{ my_name }} - create startup service(s) instance"
-    ansible.builtin.template:
-      src: templates/{{ my_file }}/{{ item.name }}.{{ item.type }}.j2
-      dest: /usr/lib/systemd/system/{{ item.name }}@.{{ item.type }}
-      owner: root
-      group: root
-      mode: 0644
-    with_items: "{{ systemd_units }}"
-    notify: "{{ my_name }} daemon-reload" 
+    - name: "{{ my_name }} - create startup service(s) instance"
+      ansible.builtin.template:
+        src: templates/{{ my_file }}/{{ item.name }}.{{ item.type }}.j2
+        dest: /usr/lib/systemd/system/{{ item.name }}@.{{ item.type }}
+        owner: root
+        group: root
+        mode: 0644
+      with_items: "{{ systemd_units }}"
+      notify: "{{ my_name }} daemon-reload"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
     - name: "{{ my_name }} daemon-reload"
       ansible.builtin.systemd:
-        daemon_reload: yes
+        daemon_reload: true

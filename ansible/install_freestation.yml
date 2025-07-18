@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: true
 
   vars:
     my_name: "freestation"
@@ -18,23 +18,23 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.romdir
+    - ansible.builtin.import_role:
+        name: retronas.role.romdir
 
-  - ansible.builtin.import_role:
-      name: retronas.role.extradirs
+    - ansible.builtin.import_role:
+        name: retronas.role.extradirs
 
-  - ansible.builtin.import_role:
-      name: retronas.role.nfs
+    - ansible.builtin.import_role:
+        name: retronas.role.nfs
 
-  - ansible.builtin.import_role:
-      name: retronas.role.samba
+    - ansible.builtin.import_role:
+        name: retronas.role.samba
 
-  - ansible.builtin.import_role:
-      name: retronas.role.samba.system
+    - ansible.builtin.import_role:
+        name: retronas.role.samba.system
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

@@ -1,6 +1,6 @@
-# Dependencies
+---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "dhcpcd"
@@ -14,19 +14,19 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - name: "{{ my_name }} - restart if imported because handlers will not run"
-    service:
-      name: "{{ item }}"
-      state: restarted
-      enabled: yes
-    with_items: "{{ my_services }}"
-    when: changed is true
+    - name: "{{ my_name }} - restart if imported because handlers will not run"
+      service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: true
+      with_items: "{{ my_services }}"
+      when: changed is true
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

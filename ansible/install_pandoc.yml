@@ -1,24 +1,23 @@
-# Dependencies
-
+---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     - my_name: "pandoc"
     - my_file: "install_pandoc"
 
     - packages:
-      - pandoc
+        - pandoc
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - name: "{{ my_name }} - Install packages"
-    package:
-       name: "{{ packages }}"
-       state: latest
+    - name: "{{ my_name }} - Install packages"
+      package:
+        name: "{{ packages }}"
+        state: latest
 
 - ansible.builtin.import_playbook: retronas_system_config.yml
   vars:

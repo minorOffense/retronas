@@ -1,5 +1,6 @@
+---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "EtherDFS"
@@ -27,62 +28,61 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - Install from source code"
-    ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
-    args:
-      creates: "{{ retronas_root }}/bin/ethersrv"
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - Install from source code"
+      ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+      args:
+        creates: "{{ retronas_root }}/bin/ethersrv"
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - configure includes file"
-    ansible.builtin.ini_file:
-      path: /etc/samba/smb.conf
-      section: dos
-      option: "include"
-      value: "/etc/samba/retronas_dos.conf"
-    notify: "{{ my_name }} - Install Samba"
+    - name: "{{ my_name }} - configure includes file"
+      ansible.builtin.ini_file:
+        path: /etc/samba/smb.conf
+        section: dos
+        option: "include"
+        value: "/etc/samba/retronas_dos.conf"
+      notify: "{{ my_name }} - Install Samba"
 
-  - name: "{{ my_name }} - enable startup service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: started
-      enabled: yes
-      daemon_reload: yes
-    with_items:
-      - etherdfs
+    - name: "{{ my_name }} - enable startup service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+      with_items:
+        - etherdfs
 
-  - ansible.builtin.import_role: 
-      name: retronas.role.samba
-    vars:
-      changed: "{{ install_changed }}"
-    when: install_changed is defined and
-          install_changed is true
+    - ansible.builtin.import_role:
+        name: retronas.role.samba
+      vars:
+        changed: "{{ install_changed }}"
+      when: install_changed is defined and
+            install_changed is true
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: restarted
-      daemon_reload: yes
-    with_items:
-      - etherdfs
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        daemon_reload: true
+      with_items:
+        - etherdfs
 
-  - name: "{{ my_name }} - Install Samba"
-    set_fact:
-      install_changed: true
-
+    - name: "{{ my_name }} - Install Samba"
+      set_fact:
+        install_changed: true

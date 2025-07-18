@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "MiSTer CIFS"
@@ -32,47 +32,47 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.romdir
+    - ansible.builtin.import_role:
+        name: retronas.role.romdir
 
-  - ansible.builtin.import_role:
-      name: retronas.role.extradirs
+    - ansible.builtin.import_role:
+        name: retronas.role.extradirs
 
-  - ansible.builtin.import_role:
-      name: retronas.role.samba
+    - ansible.builtin.import_role:
+        name: retronas.role.samba
 
-  - ansible.builtin.import_role:
-      name: retronas.role.samba.system
+    - ansible.builtin.import_role:
+        name: retronas.role.samba.system
 
-  - name: "{{ my_name }} - create custom save directories"
-    ansible.builtin.file:
-      dest: "{{ retronas_path }}/{{ item.1 }}/{{ item.0.src|lower }}"
-      state: directory
-    with_nested: 
-      - "{{ save_overrides }}"
-      - ["saves", "savestates"]
+    - name: "{{ my_name }} - create custom save directories"
+      ansible.builtin.file:
+        dest: "{{ retronas_path }}/{{ item.1 }}/{{ item.0.src|lower }}"
+        state: directory
+      with_nested:
+        - "{{ save_overrides }}"
+        - ["saves", "savestates"]
 
-  - name: "{{ my_name }} - create custom save links"
-    ansible.builtin.file:
-      src: "../../{{ item.1 }}/{{ item.0.src|lower }}"
-      dest: "{{ retronas_path }}/{{ system_key }}/{{ item.1 }}/{{ item.0.name }}"
-      state: link
-    with_nested: 
-      - "{{ save_overrides }}"
-      - ["saves", "savestates"]
+    - name: "{{ my_name }} - create custom save links"
+      ansible.builtin.file:
+        src: "../../{{ item.1 }}/{{ item.0.src|lower }}"
+        dest: "{{ retronas_path }}/{{ system_key }}/{{ item.1 }}/{{ item.0.name }}"
+        state: link
+      with_nested:
+        - "{{ save_overrides }}"
+        - ["saves", "savestates"]
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
-    when: dirs_only is false
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
+      when: dirs_only is false
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} daemon-reload"
-    ansible.builtin.systemd:
-      daemon_reload: yes
+    - name: "{{ my_name }} daemon-reload"
+      ansible.builtin.systemd:
+        daemon_reload: true

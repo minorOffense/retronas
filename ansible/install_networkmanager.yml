@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "network manager"
@@ -12,6 +12,6 @@
 
   tasks:
 
-  - name: "{{ my_name }} - does nothing"
-    debug:
-      msg: "currently does nothing"
+    - name: "{{ my_name }} - does nothing"
+      debug:
+        msg: "currently does nothing"

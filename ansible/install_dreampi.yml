@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: yes
+  gather_facts: true
 
   vars:
     my_name: "dreampi"
@@ -9,15 +9,15 @@
 
     packages:
       - git
-      - dnsmasq 
-      - dnsutils 
+      - dnsmasq
+      - dnsutils
       - libnetfilter-queue-dev
-      - libnetfilter-queue1 
+      - libnetfilter-queue1
       - ppp
-      - arping 
-      - nftables 
-      - tcpd 
-      - wvdial 
+      - arping
+      - nftables
+      - tcpd
+      - wvdial
       - python3-pip
 
     groups:
@@ -37,54 +37,54 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Checking hw platform compatiblity"
-    ansible.builtin.debug:
-      msg: "INCOMPATIBLE PLATFORM, only arm platforms are supported"
-    when: ansible_architecture is not search('arm') and
-          ansible_architecture != 'aarch64'
+    - name: "{{ my_name }} - Checking hw platform compatiblity"
+      ansible.builtin.debug:
+        msg: "INCOMPATIBLE PLATFORM, only arm platforms are supported"
+      when: ansible_architecture is not search('arm') and
+            ansible_architecture != 'aarch64'
 
-  - ansible.builtin.meta: end_play
-    when: ansible_architecture is not search('arm') and
-          ansible_architecture != 'aarch64'
+    - ansible.builtin.meta: end_play
+      when: ansible_architecture is not search('arm') and
+            ansible_architecture != 'aarch64'
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths 
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - Run installer"
-    ansible.builtin.shell:
-      cmd: "./{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
-      chdir: "{{ retronas_root }}/scripts"
-      executable: /bin/bash
-    notify: "{{ my_name }} Restart Services"
+    - name: "{{ my_name }} - Run installer"
+      ansible.builtin.shell:
+        cmd: "./{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+        chdir: "{{ retronas_root }}/scripts"
+        executable: /bin/bash
+      notify: "{{ my_name }} Restart Services"
 
-  - name: "{{ my_name }} - Patch systemd service"
-    ansible.builtin.lineinfile:
-      path: /etc/systemd/system/{{ item.unit }}
-      regex: "{{ item.regex }}"
-      insertafter: "{{ item.after }}"
-      line: "{{ item.line }}"
-      state: present
-    with_items: "{{ systemd_patches }}"
-    notify: "{{ my_name }} Restart Services"
+    - name: "{{ my_name }} - Patch systemd service"
+      ansible.builtin.lineinfile:
+        path: /etc/systemd/system/{{ item.unit }}
+        regex: "{{ item.regex }}"
+        insertafter: "{{ item.after }}"
+        line: "{{ item.line }}"
+        state: present
+      with_items: "{{ systemd_patches }}"
+      notify: "{{ my_name }} Restart Services"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
-  - name: "{{ my_name }} Restart Services"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: started
-      enabled: yes
-      daemon_reload: yes
-    with_items:
-      - "{{ my_name }}.service"
+    - name: "{{ my_name }} Restart Services"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+      with_items:
+        - "{{ my_name }}.service"

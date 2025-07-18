@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "apfs-fuse"
@@ -9,13 +9,13 @@
 
     packages:
       - git
-      - fuse 
-      - libfuse3-dev 
-      - bzip2 
-      - libbz2-dev 
-      - cmake 
-      - g++ 
-      - libattr1-dev 
+      - fuse
+      - libfuse3-dev
+      - bzip2
+      - libbz2-dev
+      - cmake
+      - g++
+      - libattr1-dev
       - zlib1g-dev
 
     templates:
@@ -23,19 +23,19 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  -  ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - build source"
-    ansible.builtin.command:
-      cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
-      creates: "{{ retronas_root }}/bin/apfs-fuse"
+    - name: "{{ my_name }} - build source"
+      ansible.builtin.command:
+        cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
+        creates: "{{ retronas_root }}/bin/apfs-fuse"
 
-  -  ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

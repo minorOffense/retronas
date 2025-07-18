@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "analoguepocket CIFS"
@@ -15,25 +15,22 @@
       - { name: "Presets",      enabled: yes,  generic: "",       systems: no }
       - { name: "Saves",        enabled: yes,  generic: "",       systems: no }
 
-    #internal_symlinks:
-    #  - { src: '', dest: '' }
-
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.romdir
+    - ansible.builtin.import_role:
+        name: retronas.role.romdir
 
-  - ansible.builtin.import_role:
-      name: retronas.role.extradirs
+    - ansible.builtin.import_role:
+        name: retronas.role.extradirs
 
-  - ansible.builtin.import_role:
-      name: retronas.role.samba
+    - ansible.builtin.import_role:
+        name: retronas.role.samba
 
-  - ansible.builtin.import_role:
-      name: retronas.role.samba.system
+    - ansible.builtin.import_role:
+        name: retronas.role.samba.system
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

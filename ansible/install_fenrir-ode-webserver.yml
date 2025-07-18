@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "fenrir-ode-webserver"
@@ -26,34 +26,34 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - run build tool"
-    ansible.builtin.shell:
-      cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
-      creates: "{{ fenrir_ode_bin }}"
+    - name: "{{ my_name }} - run build tool"
+      ansible.builtin.shell:
+        cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
+        creates: "{{ fenrir_ode_bin }}"
 
-  - name: "{{ my_name }} - create share link"
-    ansible.builtin.file:
-      src: "roms/sega/saturn"
-      dest: "{{ fenrir_ode_path }}"
-      state: link
+    - name: "{{ my_name }} - create share link"
+      ansible.builtin.file:
+        src: "roms/sega/saturn"
+        dest: "{{ fenrir_ode_path }}"
+        state: link
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: restarted
-      enabled: yes
-      daemon_reload: yes
-    with_items: "{{ my_service }}"
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        enabled: true
+        daemon_reload: true
+      with_items: "{{ my_service }}"

@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "wrp"
@@ -22,56 +22,56 @@
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - name: "{{ my_name }} - check architecture"
-    ansible.builtin.shell:
-      cmd: dpkg --print-architecture | head -n1
-    register: architecture
+    - name: "{{ my_name }} - check architecture"
+      ansible.builtin.shell:
+        cmd: dpkg --print-architecture | head -n1
+      register: architecture
 
-  - name: "{{ my_name }} - check google-chrome"
-    ansible.builtin.stat:
-      path: "{{ google_chrome }}"
-    register: google_chrome_check
+    - name: "{{ my_name }} - check google-chrome"
+      ansible.builtin.stat:
+        path: "{{ google_chrome }}"
+      register: google_chrome_check
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
-    when: google_chrome_check.stat.exists is false
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
+      when: google_chrome_check.stat.exists is false
 
-  - name: "{{ my_name }} - fake google-chrome"
-    ansible.builtin.file:
-       src: "{{ chromium }}"
-       dest: "{{ google_chrome }}"
-       state: link
-    when: google_chrome_check.stat.exists is false
+    - name: "{{ my_name }} - fake google-chrome"
+      ansible.builtin.file:
+        src: "{{ chromium }}"
+        dest: "{{ google_chrome }}"
+        state: link
+      when: google_chrome_check.stat.exists is false
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - name: "{{ my_name }} - Run installer"
-    ansible.builtin.shell:
-      cmd: "./{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
-      chdir: "{{ retronas_root }}/scripts"
-      executable: /bin/bash
+    - name: "{{ my_name }} - Run installer"
+      ansible.builtin.shell:
+        cmd: "./{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+        chdir: "{{ retronas_root }}/scripts"
+        executable: /bin/bash
 
-  - name: "{{ my_name }} - enable startup service"
-    ansible.builtin.service:
-      name: "{{ my_name }}"
-      state: started
-      enabled: yes
-      daemon_reload: yes
+    - name: "{{ my_name }} - enable startup service"
+      ansible.builtin.service:
+        name: "{{ my_name }}"
+        state: started
+        enabled: true
+        daemon_reload: true
 
-  - ansible.builtin.import_role:
-      name: retronas.role.firewalld.port
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ my_name }}"
-      state: restarted
-      daemon_reload: yes
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ my_name }}"
+        state: restarted
+        daemon_reload: true

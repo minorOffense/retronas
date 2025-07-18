@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: no
+  gather_facts: false
 
   vars:
     my_name: "litch"
@@ -13,40 +13,40 @@
       - git
 
     templates:
-      - { name: "litch_login.sh",          dest: "{{ retronas_root }}/scripts", mode: "0755"}
-      - { name: "litch_download.sh",       dest: "{{ retronas_root }}/scripts", mode: "0755"}
-      - { name: "litch_download_clean.sh", dest: "{{ retronas_root }}/scripts", mode: "0755"}
-      - { name: "litch_claim.sh",          dest: "{{ retronas_root }}/scripts", mode: "0755"}
+      - { name: "litch_login.sh",          dest: "{{ retronas_root }}/scripts", mode: "0755" }
+      - { name: "litch_download.sh",       dest: "{{ retronas_root }}/scripts", mode: "0755" }
+      - { name: "litch_download_clean.sh", dest: "{{ retronas_root }}/scripts", mode: "0755" }
+      - { name: "litch_claim.sh",          dest: "{{ retronas_root }}/scripts", mode: "0755" }
 
   tasks:
 
-  - name: "{{ my_name }} - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - name: "{{ my_name }} - create GOG dir"
-    ansible.builtin.file:
-      path: "{{ retronas_path }}/itchio"
-      owner: "{{ retronas_user }}"
-      group: "{{ retronas_group }}"
-      mode: "0775"
-      state: directory
+    - name: "{{ my_name }} - create GOG dir"
+      ansible.builtin.file:
+        path: "{{ retronas_path }}/itchio"
+        owner: "{{ retronas_user }}"
+        group: "{{ retronas_group }}"
+        mode: "0775"
+        state: directory
 
-  - name: "{{ my_name }} - download litch"
-    ansible.builtin.shell:
-      chdir: "{{ retronas_root }}/bin"
-      cmd: "git clone https://github.com/sairuk/litch.git"
-      creates: "{{ retronas_root }}/bin/litch"
+    - name: "{{ my_name }} - download litch"
+      ansible.builtin.shell:
+        chdir: "{{ retronas_root }}/bin"
+        cmd: "git clone https://github.com/sairuk/litch.git"
+        creates: "{{ retronas_root }}/bin/litch"
 
-  - name: "{{ my_name }} - update litch"
-    ansible.builtin.shell: 
-      chdir: "{{ retronas_root }}/bin/litch"
-      cmd: "git pull"
+    - name: "{{ my_name }} - update litch"
+      ansible.builtin.shell:
+        chdir: "{{ retronas_root }}/bin/litch"
+        cmd: "git pull"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config

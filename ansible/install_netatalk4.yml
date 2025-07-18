@@ -1,6 +1,6 @@
 ---
 - hosts: localhost
-  gather_facts: yes
+  gather_facts: true
 
   vars:
     my_name: "Netatalk4"
@@ -42,12 +42,16 @@
       - tracker
 
     packages_debian:
-        debian11:
-          - libmysqlclient-dev
-          - libtracker-sparql-2.0-dev
-        debian12:
-          - default-libmysqlclient-dev
-          - libtracker-sparql-3.0-dev
+      debian11:
+        - libmysqlclient-dev
+        - libtracker-sparql-2.0-dev
+      debian12:
+        - default-libmysqlclient-dev
+        - libtracker-sparql-3.0-dev
+      debian13:
+        - default-libmysqlclient-dev
+        - libtracker-sparql-3.0-dev
+
 
     packages_ubuntu:
       - libmysqlclient-dev
@@ -90,105 +94,105 @@
 
   tasks:
 
-  - name: "{{ my_name }}  - Load RetroNAS config"
-    ansible.builtin.include_vars: retronas_vars.yml
+    - name: "{{ my_name }}  - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
 
-  - name: "{{ my_name }}  - check if netatalk package is available"
-    ansible.builtin.shell: "/usr/bin/apt-cache search netatalk | grep netatalk"
-    register: result
-    failed_when:
-      - result.rc >= 2
+    - name: "{{ my_name }}  - check if netatalk package is available"
+      ansible.builtin.shell: "/usr/bin/apt-cache search netatalk | grep netatalk"
+      register: result
+      failed_when:
+        - result.rc >= 2
 
-  - name: "{{ my_name }} - unhold netatalk package"
-    ansible.builtin.shell: "/usr/bin/apt-mark unhold netatalk"
-    when: result.rc == 0
+    - name: "{{ my_name }} - unhold netatalk package"
+      ansible.builtin.shell: "/usr/bin/apt-mark unhold netatalk"
+      when: result.rc == 0
 
-  - name: "{{ my_name }} - remove package-based Netatalk"
-    ansible.builtin.package:
-      name: netatalk
-      state: absent
+    - name: "{{ my_name }} - remove package-based Netatalk"
+      ansible.builtin.package:
+        name: netatalk
+        state: absent
 
-  - name: "{{ my_name }} - remove old service files"
-    ansible.builtin.stat:
-      path: "{{ item.dest }}/{{ item.name }}"
-    loop: "{{ old_services }}"
-    register: old_services_check
+    - name: "{{ my_name }} - remove old service files"
+      ansible.builtin.stat:
+        path: "{{ item.dest }}/{{ item.name }}"
+      loop: "{{ old_services }}"
+      register: old_services_check
 
-  - name: "{{ my_name }} - Stopping existing netatalk service(s) during installation"
-    ansible.builtin.service:
-      name: "{{ item.stat.path }}"
-      state: stopped
-      daemon-reload: yes
-    loop: "{{ old_services_check.results }}"
-    when: old_services_check is defined and
-          item.stat.exists is true
+    - name: "{{ my_name }} - Stopping existing netatalk service(s) during installation"
+      ansible.builtin.service:
+        name: "{{ item.stat.path }}"
+        state: stopped
+        daemon-reload: true
+      loop: "{{ old_services_check.results }}"
+      when: old_services_check is defined and
+            item.stat.exists is true
 
-  - name: "{{ my_name }} - Remove old service files"
-    ansible.builtin.file:
-      path: "{{ item.stat.path }}"
-      state: absent
-    loop: "{{ old_services_check.results }}"
-    when: old_services_check is defined and
-          item.stat.exists is true
+    - name: "{{ my_name }} - Remove old service files"
+      ansible.builtin.file:
+        path: "{{ item.stat.path }}"
+        state: absent
+      loop: "{{ old_services_check.results }}"
+      when: old_services_check is defined and
+            item.stat.exists is true
 
-  - ansible.builtin.import_role:
-      name: retronas.role.package.latest
+    - ansible.builtin.import_role:
+        name: retronas.role.package.latest
 
-  - name: "{{ my_name }} - Install build tools (debian)"
-    ansible.builtin.package:
-      name: "{{ packages_debian['debian' + ansible_distribution_major_version ] }}"
-      state: latest
-    when: ansible_distribution == 'Debian'
+    - name: "{{ my_name }} - Install build tools (debian)"
+      ansible.builtin.package:
+        name: "{{ packages_debian['debian' + ansible_distribution_major_version ] }}"
+        state: latest
+      when: ansible_distribution == 'Debian'
 
-  - name: "{{ my_name }} - Install build tools (ubuntu)"
-    ansible.builtin.package:
-      name: "{{ packages_ubuntu }}"
-      state: latest
-    when: ansible_distribution == 'Ubuntu'
+    - name: "{{ my_name }} - Install build tools (ubuntu)"
+      ansible.builtin.package:
+        name: "{{ packages_ubuntu }}"
+        state: latest
+      when: ansible_distribution == 'Ubuntu'
 
-  - ansible.builtin.import_role:
-      name: retronas.role.romdir
+    - ansible.builtin.import_role:
+        name: retronas.role.romdir
 
-  - ansible.builtin.import_role:
-      name: retronas.role.paths
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
 
-  - ansible.builtin.import_role:
-      name: retronas.role.templates
-    notify: "{{ my_name }} - Restart service"
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - install from source"
-    ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+    - name: "{{ my_name }} - install from source"
+      ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
 
-  - name: "{{ my_name }} - configure"
-    ansible.builtin.ini_file:
-      dest: /opt/retronas/bin/netatalk4/etc/afp.conf
-      section: "{{ item.section }}"
-      option: "{{ item.option }}"
-      value: "{{ item.value }}"
-    with_items: "{{ afp_settings }}"
-    notify: "{{ my_name }} - Restart service"
+    - name: "{{ my_name }} - configure"
+      ansible.builtin.ini_file:
+        dest: /opt/retronas/bin/netatalk4/etc/afp.conf
+        section: "{{ item.section }}"
+        option: "{{ item.option }}"
+        value: "{{ item.value }}"
+      with_items: "{{ afp_settings }}"
+      notify: "{{ my_name }} - Restart service"
 
-  - name: "{{ my_name }} - atalkd"
-    ansible.builtin.lineinfile:
-      path: /opt/retronas/bin/netatalk4/etc/atalkd.conf
-      regexp: "^{{ ansible_default_ipv4.interface }}.*"
-      line: "{{ ansible_default_ipv4.interface }} -router -phase 2 -net 1 -zone \"retroafp\""
+    - name: "{{ my_name }} - atalkd"
+      ansible.builtin.lineinfile:
+        path: /opt/retronas/bin/netatalk4/etc/atalkd.conf
+        regexp: "^{{ ansible_default_ipv4.interface }}.*"
+        line: "{{ ansible_default_ipv4.interface }} -router -phase 2 -net 1 -zone \"retroafp\""
 
-  - name: "{{ my_name }} - enable startup services"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: started
-      enabled: yes
-    with_items: "{{ my_services }}"
+    - name: "{{ my_name }} - enable startup services"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: started
+        enabled: true
+      with_items: "{{ my_services }}"
 
-  - ansible.builtin.import_role:
-      name: retronas.role.system-config
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
 
   handlers:
 
-  - name: "{{ my_name }} - Restart service"
-    ansible.builtin.service:
-      name: "{{ item }}"
-      state: restarted
-      daemon-reload: yes
-    with_items: "{{ my_services }}"
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ item }}"
+        state: restarted
+        daemon-reload: true
+      with_items: "{{ my_services }}"
