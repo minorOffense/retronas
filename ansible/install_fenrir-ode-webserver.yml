@@ -31,24 +31,20 @@
 
     - ansible.builtin.import_role:
         name: retronas.role.package.latest
-      notify: "{{ my_name }} - Restart service"
 
     - ansible.builtin.import_role:
         name: retronas.role.templates
-      notify: "{{ my_name }} - Restart service"
 
     - name: "{{ my_name }} - run build tool"
       ansible.builtin.shell:
         cmd: "{{ retronas_root }}/scripts/{{ my_file }}.sh"
         creates: "{{ fenrir_ode_bin }}"
-      notify: "{{ my_name }} - Restart service"
 
     - name: "{{ my_name }} - create share link"
       ansible.builtin.file:
         src: "roms/sega/saturn"
         dest: "{{ fenrir_ode_path }}"
         state: link
-      notify: "{{ my_name }} - Restart service"
 
     - ansible.builtin.import_role:
         name: retronas.role.system-config
