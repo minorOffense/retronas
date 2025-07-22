@@ -1,0 +1,11 @@
+---
+- name: "{{ my_name }} - Load RetroNAS config"
+  ansible.builtin.include_vars: retronas_vars.yml
+
+- name: "{{ my_name }} - manage htpasswd"
+  ansible.builtin.file: 
+    path: "{{ retronas_htpasswd }}"
+    owner: "{{ retronas_user }}"
+    group: "{{ retronas_group }}"
+    state: touch
+    mode: "0640"
