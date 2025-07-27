@@ -48,8 +48,8 @@
                 "prompt": "",
                 "type": "form",
                 "group":"",
-                "command": "tcpser_edit/VIRTUAL",
-                "args": ""
+                "command": "tcpser_edit",
+                "args": "VIRTUAL"
             },
             {
                 "index":"05",
@@ -59,8 +59,8 @@
                 "prompt": "",
                 "type": "form",
                 "group":"",
-                "command": "tcpser_status/START",
-                "args": ""
+                "command": "tcpser_status",
+                "args": "START"
             },
             {
                 "index":"06",
@@ -70,8 +70,8 @@
                 "prompt": "",
                 "type": "form",
                 "group":"",
-                "command": "tcpser_status/STATUS",
-                "args": ""
+                "command": "tcpser_status",
+                "args": "STATUS"
             },
             {
                 "index":"07",
@@ -81,8 +81,8 @@
                 "prompt": "",
                 "type": "form",
                 "group":"",
-                "command": "tcpser_status/STOP",
-                "args": ""
+                "command": "tcpser_status",
+                "args": "STOP"
             }
         ]
     },

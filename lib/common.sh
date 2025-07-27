@@ -215,7 +215,7 @@ READ_MENU_COMMAND() {
                 EXEC_SCRIPT "y-${MENU_SELECT}"
                 ;;
             form)
-                EXEC_SCRIPT "f-${MENU_SELECT}"
+                EXEC_SCRIPT "f-${MENU_SELECT}" $MENU_ARGS
                 ;;
             script)
                 EXEC_SCRIPT $MENU_SELECT $MENU_ARGS

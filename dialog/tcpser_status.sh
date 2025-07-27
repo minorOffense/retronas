@@ -12,7 +12,6 @@ rn_tcpser_status() {
 
   local MODE="${1}"
   READ_MENU_TDESC "${MENU_NAME}"
-
   MENU_ARRAY=(
     "Listen Port:" 1 5 "$LISTEN"  2 20 20 20
   )
@@ -20,7 +19,7 @@ rn_tcpser_status() {
   DLG_FORM "${MENU_TNAME}" "${MENU_ARRAY}" 8 "${MENU_BLURB}"
 
   [ ${#CHOICE[@]} -gt 0 ] && RN_SYSTEMD_$(echo ${MODE} | tr '[a-z]' '[A-Z]') tcpser@${CHOICE}.service
-
+  PAUSE
 }
 
 
