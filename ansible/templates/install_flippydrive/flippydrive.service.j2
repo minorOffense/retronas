@@ -1,0 +1,15 @@
+[Unit]
+Description=Flippydrive Network Service
+Documentation=https://docs.flippydrive.com/network.html
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+User={{ retronas_user }}
+Type=simple
+ExecStart=/opt/flippydrive/flippydrive.sh
+TimeoutStopSec=10
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

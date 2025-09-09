@@ -1,0 +1,21 @@
+#!/bin/bash
+
+cd /opt/flippydrive
+
+ARCH=$(uname -m)
+
+case $ARCH in
+  x86_64)
+    ARCH=amd64
+    ;;
+  *)
+    echo "Unsupported architecture: $ARCH"
+    exit 1
+esac
+
+LASTREL=$(ls -rt flippy_cli_*_linux_${ARCH} | tail -n1)
+if [ ! -z $LASTREL ]
+then
+  [ ! -x $LASTREL ] && chmod +x $LASTREL
+  ./$LASTREL {{ retronas_path }}/gamecube/iso
+fi

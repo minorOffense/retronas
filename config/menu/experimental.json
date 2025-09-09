@@ -49,6 +49,17 @@
               "group": "samba",
               "command": "xbox",
               "args": ""
+            },
+            {
+              "index": "05",
+              "title": "flippydrive",
+              "description": "Flippydrive Network service",
+              "id": "flippydrive",
+              "prompt": "",
+              "type": "dialog",
+              "group": "",
+              "command": "flippydrive",
+              "args": ""
             }
         ]
     }

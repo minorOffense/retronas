@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Set world readable/executable umask
+umask 0022
+
+SRCDIR="/opt/flippydrive"
+cd "${SRCDIR}"
+
+RELEASE=$( curl -kLs https://api.github.com/repos/OffBroadway/flippydrive-assets/releases | jq -r ".[0].assets | map(select(.name | match (\"flippy_cli_.*linux\")))[-1] | .browser_download_url" )
+[ -z "$RELEASE" ] && echo "Couldn't get release name name" && exit 1
+
+echo "Downloading $RELEASE"
+cd /tmp
+curl -OJL "${RELEASE}"
+unzip flippy_cli_*.zip -d $SRCDIR
+
+rm -f /tmp/flippy_cli_*.zip

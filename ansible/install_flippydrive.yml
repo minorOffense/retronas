@@ -1,0 +1,67 @@
+---
+- hosts: localhost
+  gather_facts: true
+
+  vars:
+    my_name: "Flippydrive"
+    my_file: "install_flippydrive"
+    my_service: "flippydrive"
+    module_name: "flippydrive"
+
+    paths:
+      - { name: "gamecube", dest: "{{ retronas_path }}" }
+      - { name: "{{ my_service }}", dest: "/opt" }
+
+    templates:
+      - { name: "{{ my_file }}.sh", dest: "{{ retronas_root }}/scripts", mode: "0755" }
+      - { name: "{{ my_service }}.sh", dest: "/opt/{{ my_service }}", mode: "0755" }
+      - { name: "{{ my_service }}.service", dest: "/etc/systemd/system/" }
+
+    firewalld_ports:
+      - { port: 7031, protocol: tcp }
+
+  tasks:
+
+    - ansible.builtin.assert:
+        that: ansible_architecture == "x86_64"
+        fail_msg: "Unsupported architecture"
+
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
+
+    - name: "{{ my_name }} - Load RetroNAS systems"
+      ansible.builtin.include_vars: retronas_systems.yml
+
+    - ansible.builtin.import_role:
+        name: retronas.role.romdir
+
+    - ansible.builtin.import_role:
+        name: retronas.role.paths
+
+    - ansible.builtin.import_role:
+        name: retronas.role.templates
+
+    - name: "{{ my_name }} - Install from repo"
+      ansible.builtin.shell: "{{ retronas_root }}/scripts/{{ my_file }}.sh 2>&1 | tee {{ retronas_root }}/log/{{ my_file }}.log"
+      notify: "{{ my_name }} - Restart service"
+
+    - name: "{{ my_name }} - enable startup service"
+      ansible.builtin.service:
+        name: "{{ my_service }}"
+        state: started
+        enabled: true
+        daemon_reload: true
+
+    - ansible.builtin.import_role:
+        name: retronas.role.firewalld.port
+
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
+
+  handlers:
+
+    - name: "{{ my_name }} - Restart service"
+      ansible.builtin.service:
+        name: "{{ my_service }}"
+        state: restarted
+        daemon_reload: false
