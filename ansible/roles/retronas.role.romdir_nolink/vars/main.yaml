@@ -1,0 +1,6 @@
+my_name: "Generic ROM dir (no symlinks)"
+my_file: "install_romdir_nolink"
+module_name: "romdir_nolink"
+
+top_level_paths:
+  - { name: "roms", enabled: yes, systems: yes }

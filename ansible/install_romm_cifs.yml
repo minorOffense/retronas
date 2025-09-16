@@ -19,7 +19,7 @@
       ansible.builtin.include_vars: retronas_vars.yml
 
     - ansible.builtin.import_role:
-        name: retronas.role.romdir
+        name: retronas.role.romdir_nolink
 
     - ansible.builtin.import_role:
         name: retronas.role.extradirs
