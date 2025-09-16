@@ -953,7 +953,18 @@
         "group": "",
         "command": "zterm",
         "args": ""
-      }
+      },
+      {
+        "index": "88",
+        "title": "RomM CIFS",
+        "description": "Setup Samba mount for RomM",
+        "id": "romm_cifs",
+        "prompt": "Open",
+        "type": "dialog",
+        "group": "",
+        "command": "romm_cifs",
+        "args": ""
+      },
     ]
   }
 }
