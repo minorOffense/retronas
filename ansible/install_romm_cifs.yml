@@ -1,0 +1,56 @@
+---
+- hosts: localhost
+  gather_facts: false
+
+  vars:
+    my_name: "RomM CIFS"
+    my_file: "install_romm_cifs"
+    system_key: "romm"
+    module_name: "romm_cifs"
+
+    top_level_paths:
+      - { name: "roms",   enabled: yes,  generic: "roms",   systems: yes }
+    #  - { name: "saves",  enabled: yes,  generic: "saves",  systems: yes }
+      # - { name: "bios",   enabled: yes,  generic: "bios",   systems: yes }
+
+    internal_symlinks:
+      - { src: 'commodore/amiga', dest: 'ags' }
+      - { src: 'commodore/amiga', dest: 'amiga600' }
+      - { src: 'atari/jaguar', dest: 'atarijaguarcd' }
+      - { src: 'capcom/cps1', dest: 'cps' }
+      - { src: 'nintendo/gamecube', dest: 'gc' }
+      - { src: 'mame/mame', dest: 'mame-advmame' }
+      - { src: 'mame/mame', dest: 'mame-mame4all' }
+      - { src: 'mame/mame', dest: 'mame-mame4all' }
+      - { src: 'sega/megacd', dest: 'segacd' }
+      - { src: 'sega/megacd', dest: 'megacdjp' }
+      - { src: 'sega/megadrive', dest: 'genesis' }
+      - { src: 'sega/megadrive', dest: 'megadrivejp' }
+      - { src: 'nintendo/3ds', dest: 'n3ds' }
+      - { src: 'snk/neogeocd', dest: 'neogeocdjp' }
+      - { src: 'sony/playstation1', dest: 'psx' }
+      - { src: 'sega/saturn', dest: 'saturnjp' }
+      - { src: 'sega/32x', dest: 'sega32xjp' }
+      - { src: 'sega/32x', dest: 'sega32xna' }
+      - { src: 'nintendo/superfamicom', dest: 'sneshd' }
+      - { src: 'nintendo/superfamicom', dest: 'snesna' }
+
+  tasks:
+
+    - name: "{{ my_name }} - Load RetroNAS config"
+      ansible.builtin.include_vars: retronas_vars.yml
+
+    - ansible.builtin.import_role:
+        name: retronas.role.romdir
+
+    - ansible.builtin.import_role:
+        name: retronas.role.extradirs
+
+    - ansible.builtin.import_role:
+        name: retronas.role.samba
+
+    - ansible.builtin.import_role:
+        name: retronas.role.samba.system
+
+    - ansible.builtin.import_role:
+        name: retronas.role.system-config
