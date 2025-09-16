@@ -9,7 +9,7 @@
     module_name: "romm_cifs"
 
     top_level_paths:
-      - { name: "roms",   enabled: yes,  generic: "roms",   systems: no }
+      - { name: "roms",   enabled: yes,  generic: "roms",   systems: yes }
     #  - { name: "saves",  enabled: yes,  generic: "saves",  systems: yes }
       # - { name: "bios",   enabled: yes,  generic: "bios",   systems: yes }
 
