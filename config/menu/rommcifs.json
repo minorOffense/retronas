@@ -1,0 +1,34 @@
+{
+    "menu": 
+    {
+        "title": "RomM",
+        "description": "Install the RomM Samba service",
+        "id":"romm-cifs",
+        "prompt": "",
+        "type": "menu",
+        "items": [
+            {
+                "index": "01",
+                "title": "Back",
+                "description": "Return to previous menu", 
+                "id":"",
+                "prompt": "",
+                "type": "menu",
+                "group":"",
+                "command": "EXIT_OK",
+                "args": ""
+            },
+            {
+                "index":"02",
+                "title": "Install",
+                "description": "Install Samba for RomM support",
+                "id":"romm-cifs",
+                "prompt": "",
+                "type": "install",
+                "group":"",
+                "command": "romm_cifs",
+                "args": ""
+            }
+        ]
+    }
+}
