@@ -36,7 +36,7 @@
     - item.1.systems is true
 
 - name: Run flatten-romdir.sh for each src/dest
-  ansible.builtin.shell: "{{ retronas_root }}/scripts/static/flatten-romdir.sh {{ retronas_path }}/{{ system_key }}/{{ item.1.name }}/{{ item.0.src }} {{ retronas_path }}/{{ system_key }}/{{ item.1.name }}/{{ item.0[system_key] }}"
+  ansible.builtin.shell: "{{ retronas_root }}/scripts/static/flatten-romdir.sh {{ retronas_path }}/roms/{{ item.1.generic|lower }}/{{ item.0.src }} {{ retronas_path }}/{{ system_key }}/{{ item.1.name }}/{{ item.0[system_key] }}"
   become: true
   loop: "{{ system_map|product(top_level_paths)|list }}"
   when:
@@ -56,7 +56,7 @@
     - item[system_key] | length > 0
 
 - name: Run flatten-romdir.sh for each src/dest (no top_level)
-  ansible.builtin.shell: "{{ retronas_root }}/scripts/static/flatten-romdir.sh {{ retronas_path }}/{{ system_key }}/{{ item.src }} {{ retronas_path }}/{{ system_key }}/{{ item[system_key] }}"
+  ansible.builtin.shell: "{{ retronas_root }}/scripts/static/flatten-romdir.sh {{ retronas_path }}/roms/{{ item.src }} {{ retronas_path }}/{{ system_key }}/{{ item[system_key] }}"
   become: true
   loop: "{{ system_map }}"
   when:
