@@ -1,6 +1,4 @@
-
 #!/bin/bash
-
 
 # Allowed file extensions for hardlinking
 allowed_exts=".a26 .a52 .a78 .adf .adfd .agb .bin .chd .col .crt .cue .d64 .dms .fds .fig .gb .gba .gbc .gen .gg .g64 .img .iso .j64 .lnx .mdf .mds .md .nes .n64 .nds .ngc .ngp .pce .prg .rom .sfc .smd .smc .sms .t64 .tap .v64 .vb .wad .wsc .ws .z64 .zip .7z .rar"
