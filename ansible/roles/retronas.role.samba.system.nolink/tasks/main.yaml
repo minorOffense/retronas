@@ -20,8 +20,9 @@
     state: directory
     mode: "0775"
   loop: "{{ top_level_paths }}"
-  when: top_level_paths is defined and
-        item.enabled is true
+  when:
+    - top_level_paths is defined
+    - item.enabled is true
 
 - name: "{{ my_name }} - build layout list (set fact) (top level paths)"
   ansible.builtin.set_fact:
@@ -40,8 +41,8 @@
   loop: "{{ system_map }}"
   when:
     - top_level_paths is not defined
-        item[system_key] is defined and
-        item[system_key] | length > 0
+    - item[system_key] is defined
+    - item[system_key] | length > 0
 
 - name: "{{ my_name }} - build systems directory layout"
   ansible.builtin.shell:
@@ -56,8 +57,9 @@
     group: "{{ retronas_group }}"
     state: directory
   loop: "{{ internal_symlinks|product(top_level_paths)|list }}"
-  when: internal_symlinks is defined and
-        top_level_path is defined
+  when:
+    - internal_symlinks is defined
+    - top_level_path is defined
 
 - name: "{{ my_name }} - build internal directory layout"
   ansible.builtin.file:
@@ -66,8 +68,9 @@
     group: "{{ retronas_group }}"
     state: directory
   loop: "{{ internal_symlinks }}"
-  when: internal_symlinks is defined and
-        top_level_path is not defined
+  when:
+    - internal_symlinks is defined
+    - top_level_path is not defined
 
 - name: "{{ my_name }} - configure includes file"
   ansible.builtin.ini_file:
