@@ -58,7 +58,7 @@
 
 - name: "{{ my_name }} - build systems directory layout (set fact)"
   ansible.builtin.set_fact:
-    dir_list: "{{ dir_list|default([]) + [ 'mkdir -p ' + retronas_path  + '/' +  item.1.name + '/' + item.0.dest + ';' ] }}"
+    link_list: "{{ link_list|default([]) + [ 'mkdir -p ' + retronas_path  + '/' +  item.1.name + '/' + item.0.dest + ';' ] }}"
   loop: "{{ system_links|product(top_level_paths)|list }}"
   when:
     - item.1.enabled is true
@@ -66,8 +66,8 @@
 
 - name: "{{ my_name }} - build systems directory layout"
   ansible.builtin.shell:
-    cmd: "{{ dir_list|join('') }}"
-  when: dir_list is defined
+    cmd: "{{ link_list|join('') }}"
+  when: link_list is defined
   changed_when: false
 
 - name: "{{ my_name }} - add top level directory info"
