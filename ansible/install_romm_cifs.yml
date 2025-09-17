@@ -28,7 +28,7 @@
         name: retronas.role.samba
 
     - ansible.builtin.import_role:
-        name: retronas.role.samba.system.romm
+        name: retronas.role.samba.system.nolink
 
     - ansible.builtin.import_role:
         name: retronas.role.system-config

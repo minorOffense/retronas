@@ -1,5 +1,4 @@
-- ansible.builtin.import_role:
-    name: retronas.role.samba.system
+
 
 - name: "{{ my_name }} - build layout list (set fact) (top level paths)"
   ansible.builtin.set_fact:
@@ -21,8 +20,7 @@
 
 - name: "{{ my_name }} - build internal directory layout with top level paths"
   ansible.builtin.file:
-    src: "../../{{ item.1.generic }}/{{ item.0.src }}"
-    dest: "{{ retronas_path }}/{{ system_key }}/{{ item.1.name }}/{{ item.0.dest }}"
+    path: "{{ retronas_path }}/{{ system_key }}/{{ item.1.name }}/{{ item.0.dest }}"
     owner: "{{ retronas_user }}"
     group: "{{ retronas_group }}"
     state: directory
@@ -32,8 +30,7 @@
 
 - name: "{{ my_name }} - build internal directory layout"
   ansible.builtin.file:
-    src: "../roms/{{ item.src }}"
-    dest: "{{ retronas_path }}/{{ system_key }}/{{ item.dest }}"
+    path: "{{ retronas_path }}/{{ system_key }}/{{ item.dest }}"
     owner: "{{ retronas_user }}"
     group: "{{ retronas_group }}"
     state: directory
