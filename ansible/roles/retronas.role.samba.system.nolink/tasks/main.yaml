@@ -35,26 +35,6 @@
     - item.0[system_key] | length > 0
     - item.1.systems is true
 
-- name: Run flatten-romdir.sh for each src/dest
-  ansible.builtin.shell: "{{ retronas_root }}/scripts/static/flatten-romdir.sh {{ retronas_path }}/{{ item.1.generic|lower }}/{{ item.0.src }} {{ retronas_path }}/{{ system_key }}/{{ item.1.name }}/{{ item.0[system_key] }}"
-  become: true
-  loop: "{{ system_map|product(top_level_paths)|list }}"
-  when:
-    - top_level_paths is defined
-    - item.1.enabled is true
-    - item.0[system_key] is defined
-    - item.0[system_key] | length > 0
-    - item.1.systems is true
-
-- name: "{{ my_name }} - build layout list (set fact)"
-  ansible.builtin.set_fact:
-    path_list: "{{ path_list|default([]) + [ \"mkdir -p \" + retronas_path + '/' + system_key + '/' + item[system_key] + \";\" ] }}"
-  loop: "{{ system_map }}"
-  when:
-    - top_level_paths is not defined
-    - item[system_key] is defined
-    - item[system_key] | length > 0
-
 - name: Run flatten-romdir.sh for each src/dest (no top_level)
   ansible.builtin.shell: "{{ retronas_root }}/scripts/static/flatten-romdir.sh {{ retronas_path }}/{{ item.src }} {{ retronas_path }}/{{ system_key }}/{{ item[system_key] }}"
   become: true
@@ -106,3 +86,23 @@
     owner: root
     group: root
     mode: '0644'
+
+- name: "{{ my_name }} - build layout list (set fact)"
+  ansible.builtin.set_fact:
+    path_list: "{{ path_list|default([]) + [ \"mkdir -p \" + retronas_path + '/' + system_key + '/' + item[system_key] + \";\" ] }}"
+  loop: "{{ system_map }}"
+  when:
+    - top_level_paths is not defined
+    - item[system_key] is defined
+    - item[system_key] | length > 0
+
+- name: Run flatten-romdir.sh for each src/dest
+  ansible.builtin.shell: "{{ retronas_root }}/scripts/static/flatten-romdir.sh {{ retronas_path }}/{{ item.1.generic|lower }}/{{ item.0.src }} {{ retronas_path }}/{{ system_key }}/{{ item.1.name }}/{{ item.0[system_key] }}"
+  become: true
+  loop: "{{ system_map|product(top_level_paths)|list }}"
+  when:
+    - top_level_paths is defined
+    - item.1.enabled is true
+    - item.0[system_key] is defined
+    - item.0[system_key] | length > 0
+    - item.1.systems is true
