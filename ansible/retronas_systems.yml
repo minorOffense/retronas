@@ -393,7 +393,6 @@ system_pelvarazdin:
 system_philips:
   - { src: "philips/cdi", last: "", mister: "CD-i", retropie: "", batocera: "cdi", recalbox: "cdi", retroarch: "Philips - CD-i", ops2l: "", ps3netsrv: "", fspd: "", emuelec: "cdi", smdb: "", freestation: "", analoguepocket: "", emudeck: "cdimono1", igdb: "philips-cd-i", replayfpgaarcade: "", retrodeck: "cdimono1", pretty_name: "Philips CDI", romm: "philips-cd-i" }
   - { src: "philips/videopacplus", last: "", mister: "", retropie: "", batocera: "videopacplus", recalbox: "videopacplus", retroarch: "Philips - Videopac+", ops2l: "", ps3netsrv: "", fspd: "", emuelec: "videopac", smdb: "", freestation: "", analoguepocket: "", emudeck: "videopac", igdb: "", replayfpgaarcade: "", retrodeck: "videopac", pretty_name: "pPilips Videopac+", romm: "videopacplus" }
-system_sega:
   - { src: "philips/vg5000", last: "", mister: "", retropie: "", batocera: "", recalbox: "vg5000", retroarch: "", ops2l: "", ps3netsrv: "", fspd: "", emuelec: "", smdb: "", freestation: "", analoguepocket: "", emudeck: "", igdb: "", replayfpgaarcade: "", retrodeck: "", pretty_name: "Philips VG5000", romm: "philips-vg-5000" }
 system_sega:
   - { src: "sega/32x", last: "", mister: "S32X", retropie: "", batocera: "sega32x", recalbox: "sega32x", retroarch: "Sega - 32X", ops2l: "", ps3netsrv: "", fspd: "", emuelec: "sega32x", smdb: "", freestation: "", analoguepocket: "", emudeck: "sega32x", igdb: "sega32", replayfpgaarcade: "", retrodeck: "sega32x", pretty_name: "SEGA 32X", romm: "sega32" }
