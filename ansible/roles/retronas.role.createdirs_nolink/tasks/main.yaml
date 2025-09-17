@@ -1,5 +1,5 @@
 - ansible.builtin.import_role:
-    name: retronas.role.package.latest
+    name: retronas.role.createdirs
 
 - name: "{{ my_name }} - build systems directory layout (set fact)"
   ansible.builtin.set_fact:
