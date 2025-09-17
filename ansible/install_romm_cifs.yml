@@ -21,14 +21,14 @@
     - ansible.builtin.import_role:
         name: retronas.role.romdir_nolink
 
-    - ansible.builtin.import_role:
-        name: retronas.role.extradirs
+    # - ansible.builtin.import_role:
+    #     name: retronas.role.extradirs
 
-    - ansible.builtin.import_role:
-        name: retronas.role.samba
+    # - ansible.builtin.import_role:
+    #     name: retronas.role.samba
 
-    - ansible.builtin.import_role:
-        name: retronas.role.samba.system
+    # - ansible.builtin.import_role:
+    #     name: retronas.role.samba.system
 
-    - ansible.builtin.import_role:
-        name: retronas.role.system-config
+    # - ansible.builtin.import_role:
+    #     name: retronas.role.system-config
