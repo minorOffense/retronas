@@ -959,8 +959,8 @@
         "title": "RomM CIFS",
         "description": "Setup Samba mount for RomM",
         "id": "romm_cifs",
-        "prompt": "Install",
-        "type": "install",
+        "prompt": "",
+        "type": "dialog",
         "group": "",
         "command": "romm_cifs",
         "args": ""
