@@ -956,8 +956,8 @@
       },
       {
         "index": "88",
-        "title": "RomM CIFS",
-        "description": "Setup Samba mount for RomM",
+        "title": "RomM",
+        "description": "RomM CIFS config",
         "id": "romm_cifs",
         "prompt": "",
         "type": "dialog",
