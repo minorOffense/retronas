@@ -5,13 +5,19 @@
   vars:
     my_name: "RomM CIFS"
     my_file: "install_romm_cifs"
-    system_key: "romm"
     module_name: "romm_cifs"
+    system_key: "romm"
 
     top_level_paths:
       - { name: "roms",   enabled: yes,  generic: "roms",   systems: yes }
-    #  - { name: "saves",  enabled: yes,  generic: "saves",  systems: yes }
-      # - { name: "bios",   enabled: yes,  generic: "bios",   systems: yes }
+
+    templates:
+      - { name: "retronas-romm-dirs.service", dest: "/etc/systemd/system" }
+      - { name: "retronas-romm-dirs.timer", dest: "/etc/systemd/system" }
+
+    systemd_units:
+      - { name: "retronas-romm-dirs", type: 'service', state: "stopped", enabled: "no", restart: "no", instance: "no" }
+      - { name: "retronas-romm-dirs", type: 'timer',   state: "stopped", enabled: "no", restart: "no", instance: "no" }
 
   tasks:
 
@@ -21,14 +27,18 @@
     - ansible.builtin.import_role:
         name: retronas.role.romdir
 
-    # - ansible.builtin.import_role:
-    #     name: retronas.role.extradirs
-
     - ansible.builtin.import_role:
         name: retronas.role.samba
 
     - ansible.builtin.import_role:
         name: retronas.role.samba.system.nolink
 
-    - ansible.builtin.import_role:
+    - name: "Import system-config role"
+      ansible.builtin.import_role:
         name: retronas.role.system-config
+
+  handlers:
+
+    - name: "{{ my_name }} daemon-reload"
+      ansible.builtin.systemd:
+        daemon_reload: true
