@@ -961,7 +961,7 @@
         "id": "romm_cifs",
         "prompt": "",
         "type": "dialog",
-        "group": "",
+        "group": "samba",
         "command": "romm_cifs",
         "args": ""
       }
