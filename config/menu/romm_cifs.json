@@ -61,7 +61,18 @@
                 "group":"",
                 "command": "retronas-romm-dirs*",
                 "args": ""
-            },
+            }
+            {
+                "index":"06",
+                "title": "Run",
+                "description": "Run directory updater now",
+                "id":"",
+                "prompt": "",
+                "type": "service_start_follow",
+                "group":"",
+                "command": "retronas-romm-dirs.service",
+                "args": ""
+            }
         ]
     }
 }
